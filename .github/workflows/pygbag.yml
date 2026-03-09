@@ -28,7 +28,7 @@ jobs:
 
       - name: Build with Pygbag
         run: |
-          python -m pygbag --build .
+          python -m pygbag --build --template custom.tmpl .
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
