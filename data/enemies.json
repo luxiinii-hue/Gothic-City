@@ -1,0 +1,146 @@
+[
+    {
+        "id": "fat_fly",
+        "name": "Fat Fly",
+        "sprite": "Enemies/Dungeon_of_the_Acoc8.png",
+        "max_hp": 30,
+        "strength": 2,
+        "armor": 0,
+        "speed": 3,
+        "abilities": [],
+        "tier": "normal",
+        "gold_reward": 8,
+        "color": [80, 180, 80],
+        "idle_config": {
+            "bob_amplitude": 3.0,
+            "bob_frequency": 1.5,
+            "breathe_min": 0.995,
+            "breathe_max": 1.005,
+            "glow_enabled": false
+        }
+    },
+    {
+        "id": "goblin_brute",
+        "name": "Goblin Brute",
+        "sprite": "Enemies/Dungeon_of_the_AcocGob1.png",
+        "max_hp": 45,
+        "strength": 3,
+        "armor": 1,
+        "speed": 1,
+        "abilities": [],
+        "tier": "normal",
+        "gold_reward": 10,
+        "color": [100, 160, 60],
+        "idle_config": {
+            "bob_amplitude": 0.8,
+            "bob_frequency": 0.6,
+            "breathe_min": 0.997,
+            "breathe_max": 1.003,
+            "glow_enabled": false
+        }
+    },
+    {
+        "id": "goblin_sentinel",
+        "name": "Goblin Sentinel",
+        "sprite": "Enemies/Dungeon_of_the_AcocGob2.png",
+        "max_hp": 50,
+        "strength": 2,
+        "armor": 2,
+        "speed": 2,
+        "abilities": [],
+        "tier": "normal",
+        "gold_reward": 12,
+        "color": [120, 140, 80],
+        "idle_config": {
+            "bob_amplitude": 0.6,
+            "bob_frequency": 0.5,
+            "breathe_min": 0.997,
+            "breathe_max": 1.003,
+            "glow_enabled": false
+        }
+    },
+    {
+        "id": "goblin_assassin",
+        "name": "Goblin Assassin",
+        "sprite": "Enemies/Dungeon_of_the_AcocGob3.png",
+        "max_hp": 55,
+        "strength": 4,
+        "armor": 0,
+        "speed": 4,
+        "abilities": [],
+        "tier": "elite",
+        "gold_reward": 25,
+        "color": [60, 80, 60],
+        "idle_config": {
+            "bob_amplitude": 1.0,
+            "bob_frequency": 0.8,
+            "breathe_min": 0.996,
+            "breathe_max": 1.004,
+            "glow_enabled": false
+        }
+    },
+    {
+        "id": "bloated_fly",
+        "name": "Bloated Fly",
+        "sprite": "Enemies/Dungeon_of_the_Acoc8.png",
+        "max_hp": 70,
+        "strength": 4,
+        "armor": 1,
+        "speed": 3,
+        "abilities": [],
+        "tier": "elite",
+        "gold_reward": 25,
+        "color": [60, 140, 60],
+        "idle_config": {
+            "bob_amplitude": 3.0,
+            "bob_frequency": 1.5,
+            "breathe_min": 0.994,
+            "breathe_max": 1.006,
+            "glow_enabled": false
+        }
+    },
+    {
+        "id": "goblin_warlock",
+        "name": "Goblin Warlock",
+        "sprite": "Enemies/Dungeon_of_the_AcocGob4.png",
+        "max_hp": 120,
+        "strength": 5,
+        "armor": 2,
+        "speed": 2,
+        "abilities": ["summon_cultist"],
+        "tier": "boss",
+        "gold_reward": 50,
+        "color": [140, 60, 180],
+        "idle_config": {
+            "bob_amplitude": 1.2,
+            "bob_frequency": 0.6,
+            "breathe_min": 0.995,
+            "breathe_max": 1.005,
+            "glow_color": [160, 80, 200],
+            "glow_enabled": true,
+            "glow_radius_factor": 0.3,
+            "glow_alpha_min": 10,
+            "glow_alpha_max": 30
+        }
+    },
+    {
+        "id": "cultist_minion",
+        "name": "Cultist Minion",
+        "sprite": "Enemies/Cultist_Minion.png",
+        "max_hp": 15,
+        "strength": 2,
+        "armor": 0,
+        "speed": 4,
+        "abilities": [],
+        "tier": "minion",
+        "gold_reward": 2,
+        "color": [100, 40, 40],
+        "idle_config": {
+            "bob_amplitude": 2.0,
+            "bob_frequency": 1.5,
+            "breathe_min": 0.990,
+            "breathe_max": 1.010,
+            "glow_enabled": false
+        }
+    }
+]

@@ -1,0 +1,122 @@
+[
+    {
+        "id": "acoc1",
+        "name": "Shadow Wraith",
+        "sprite": "Characters/Dungeon_of_the_Acoc1.png",
+        "max_hp": 60,
+        "strength": 2,
+        "armor": 0,
+        "speed": 3,
+        "abilities": ["shadow_bolt"],
+        "role": "warlock",
+        "unlocked": true,
+        "description": "A spectral entity of shadow and malice. Floats through the dungeon unseen.",
+        "idle_config": {
+            "bob_amplitude": 2.0,
+            "bob_frequency": 0.5,
+            "breathe_min": 0.995,
+            "breathe_max": 1.005,
+            "glow_color": [128, 0, 200],
+            "glow_enabled": true,
+            "glow_radius_factor": 0.3,
+            "glow_alpha_min": 10,
+            "glow_alpha_max": 30
+        }
+    },
+    {
+        "id": "acoc2",
+        "name": "Flame Knight",
+        "sprite": "Characters/Dungeon_of_the_Acoc2.png",
+        "max_hp": 80,
+        "strength": 3,
+        "armor": 2,
+        "speed": 1,
+        "abilities": ["shield_bash"],
+        "role": "paladin",
+        "unlocked": true,
+        "description": "A mighty warrior wreathed in spectral flames. Slow but devastating.",
+        "idle_config": {
+            "bob_amplitude": 0.8,
+            "bob_frequency": 0.6,
+            "breathe_min": 0.997,
+            "breathe_max": 1.003,
+            "glow_color": [100, 130, 220],
+            "glow_enabled": true,
+            "glow_radius_factor": 0.25,
+            "glow_alpha_min": 8,
+            "glow_alpha_max": 22
+        }
+    },
+    {
+        "id": "acoc3",
+        "name": "Goblin Mage",
+        "sprite": "Characters/Dungeon_of_the_Acoc3.png",
+        "max_hp": 65,
+        "strength": 1,
+        "armor": 0,
+        "speed": 2,
+        "abilities": ["arcane_blast"],
+        "role": "sorcerer",
+        "unlocked": true,
+        "description": "A cunning goblin wielding arcane magic. The staff's flame never dies.",
+        "idle_config": {
+            "bob_amplitude": 1.0,
+            "bob_frequency": 0.8,
+            "breathe_min": 0.996,
+            "breathe_max": 1.004,
+            "glow_color": [200, 150, 255],
+            "glow_enabled": true,
+            "glow_radius_factor": 0.2,
+            "glow_alpha_min": 10,
+            "glow_alpha_max": 28
+        }
+    },
+    {
+        "id": "acoc4",
+        "name": "Nightfang",
+        "sprite": "Characters/Dungeon_of_the_Acoc4.png",
+        "max_hp": 90,
+        "strength": 4,
+        "armor": 1,
+        "speed": 2,
+        "abilities": ["savage_rend"],
+        "role": "barbarian",
+        "unlocked": true,
+        "description": "A bat-winged demon of raw fury. Grows deadlier as its wounds deepen.",
+        "idle_config": {
+            "bob_amplitude": 1.5,
+            "bob_frequency": 0.7,
+            "breathe_min": 0.995,
+            "breathe_max": 1.005,
+            "glow_color": [80, 200, 80],
+            "glow_enabled": true,
+            "glow_radius_factor": 0.2,
+            "glow_alpha_min": 8,
+            "glow_alpha_max": 22
+        }
+    },
+    {
+        "id": "acoc5",
+        "name": "Briarfoot",
+        "sprite": "Characters/Dungeon_of_the_Acoc5.png",
+        "max_hp": 55,
+        "strength": 2,
+        "armor": 0,
+        "speed": 4,
+        "abilities": ["twin_shot"],
+        "role": "ranger",
+        "unlocked": true,
+        "description": "A nimble halfling ranger. Quick feet and quicker arrows.",
+        "idle_config": {
+            "bob_amplitude": 0.6,
+            "bob_frequency": 0.9,
+            "breathe_min": 0.997,
+            "breathe_max": 1.003,
+            "glow_color": [120, 180, 80],
+            "glow_enabled": false,
+            "glow_radius_factor": 0.15,
+            "glow_alpha_min": 5,
+            "glow_alpha_max": 15
+        }
+    }
+]

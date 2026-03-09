@@ -1,0 +1,179 @@
+"""Sprite-based ability animations for combat."""
+
+import os
+import math
+import pygame
+from dataclasses import dataclass, field
+from config import ASSET_DIR
+
+
+def _tint_surface(surface: pygame.Surface, tint: tuple[int, int, int]) -> pygame.Surface:
+    """Apply RGB tint to a surface using multiplicative blend."""
+    tinted = surface.copy()
+    tint_layer = pygame.Surface(tinted.get_size(), pygame.SRCALPHA)
+    tint_layer.fill((*tint, 255))
+    tinted.blit(tint_layer, (0, 0), special_flags=pygame.BLEND_RGB_MULT)
+    return tinted
+
+
+def load_animation_frames(frames_dir: str, scale: int,
+                          tint: tuple[int, int, int] | None = None) -> list[pygame.Surface]:
+    """Load all PNG frames from a directory, sorted by name, scaled and optionally tinted."""
+    full_dir = os.path.join(ASSET_DIR, frames_dir)
+    if not os.path.isdir(full_dir):
+        return []
+    files = sorted(f for f in os.listdir(full_dir) if f.lower().endswith(".png"))
+    frames = []
+    for fname in files:
+        path = os.path.join(full_dir, fname)
+        img = pygame.image.load(path).convert_alpha()
+        w, h = img.get_size()
+        aspect = w / h
+        if aspect >= 1:
+            new_w = scale
+            new_h = int(scale / aspect)
+        else:
+            new_h = scale
+            new_w = int(scale * aspect)
+        img = pygame.transform.smoothscale(img, (new_w, new_h))
+        if tint:
+            img = _tint_surface(img, tint)
+        frames.append(img)
+    return frames
+
+
+@dataclass
+class SpellAnimation:
+    """Multi-frame spell effect playing at a fixed position."""
+    frames: list[pygame.Surface]
+    x: float
+    y: float
+    duration: float
+    age: float = 0.0
+
+    @property
+    def alive(self) -> bool:
+        return self.age < self.duration
+
+    @property
+    def current_frame(self) -> pygame.Surface:
+        if not self.frames:
+            return pygame.Surface((1, 1), pygame.SRCALPHA)
+        progress = self.age / self.duration
+        idx = min(int(progress * len(self.frames)), len(self.frames) - 1)
+        return self.frames[idx]
+
+
+@dataclass
+class MeleeSlashAnimation:
+    """Weapon icon that slashes diagonally across the target."""
+    sprite: pygame.Surface
+    x: float
+    y: float
+    duration: float
+    age: float = 0.0
+    slash_distance: float = 60.0
+
+    @property
+    def alive(self) -> bool:
+        return self.age < self.duration
+
+
+class AbilityAnimator:
+    """Manages active ability animations during combat."""
+
+    def __init__(self):
+        self.spell_anims: list[SpellAnimation] = []
+        self.melee_anims: list[MeleeSlashAnimation] = []
+        self._frame_cache: dict[str, list[pygame.Surface]] = {}
+
+    def _get_frames(self, frames_dir: str, scale: int,
+                    tint: tuple[int, int, int] | None) -> list[pygame.Surface]:
+        """Load and cache animation frames."""
+        cache_key = f"{frames_dir}|{scale}|{tint}"
+        if cache_key not in self._frame_cache:
+            self._frame_cache[cache_key] = load_animation_frames(frames_dir, scale, tint)
+        return self._frame_cache[cache_key]
+
+    def spawn_spell(self, x: float, y: float, frames_dir: str,
+                    scale: int = 80, duration: float = 0.6,
+                    tint: tuple[int, int, int] | None = None):
+        """Spawn a multi-frame spell animation at (x, y)."""
+        frames = self._get_frames(frames_dir, scale, tint)
+        if frames:
+            self.spell_anims.append(SpellAnimation(
+                frames=frames, x=x, y=y, duration=duration,
+            ))
+
+    def spawn_melee(self, x: float, y: float, sprite_path: str,
+                    scale: int = 64, duration: float = 0.3,
+                    tint: tuple[int, int, int] | None = None):
+        """Spawn a melee slash animation at (x, y)."""
+        full_path = os.path.join(ASSET_DIR, sprite_path)
+        if not os.path.exists(full_path):
+            return
+        img = pygame.image.load(full_path).convert_alpha()
+        img = pygame.transform.smoothscale(img, (scale, scale))
+        if tint:
+            img = _tint_surface(img, tint)
+        self.melee_anims.append(MeleeSlashAnimation(
+            sprite=img, x=x, y=y, duration=duration,
+        ))
+
+    def spawn_from_config(self, x: float, y: float, animation_config: dict):
+        """Spawn animation from an ability's animation config dict."""
+        if not animation_config:
+            return
+        anim_type = animation_config.get("type", "")
+        tint = animation_config.get("tint")
+        if tint:
+            tint = tuple(tint)
+        scale = animation_config.get("scale", 80)
+        duration = animation_config.get("duration", 0.6)
+
+        if anim_type == "spell":
+            frames_dir = animation_config.get("frames_dir", "")
+            self.spawn_spell(x, y, frames_dir, scale, duration, tint)
+        elif anim_type == "melee_slash":
+            sprite = animation_config.get("sprite", "")
+            self.spawn_melee(x, y, sprite, scale, duration, tint)
+
+    def update(self, dt: float):
+        for anim in self.spell_anims:
+            anim.age += dt
+        self.spell_anims = [a for a in self.spell_anims if a.alive]
+
+        for anim in self.melee_anims:
+            anim.age += dt
+        self.melee_anims = [a for a in self.melee_anims if a.alive]
+
+    def draw(self, surface: pygame.Surface):
+        # Draw spell animations
+        for anim in self.spell_anims:
+            frame = anim.current_frame
+            progress = anim.age / anim.duration
+            if progress > 0.7:
+                fade = 1.0 - (progress - 0.7) / 0.3
+                alpha = max(0, int(255 * fade))
+                frame = frame.copy()
+                frame.set_alpha(alpha)
+            surface.blit(frame, (
+                int(anim.x - frame.get_width() // 2),
+                int(anim.y - frame.get_height() // 2),
+            ))
+
+        # Draw melee slash animations
+        for anim in self.melee_anims:
+            progress = anim.age / anim.duration
+            offset_x = anim.slash_distance * (0.5 - progress)
+            offset_y = -anim.slash_distance * (0.5 - progress)
+            angle = -135 * progress
+            rotated = pygame.transform.rotate(anim.sprite, angle)
+            if progress > 0.6:
+                fade = 1.0 - (progress - 0.6) / 0.4
+                alpha = max(0, int(255 * fade))
+                rotated.set_alpha(alpha)
+            surface.blit(rotated, (
+                int(anim.x + offset_x - rotated.get_width() // 2),
+                int(anim.y + offset_y - rotated.get_height() // 2),
+            ))

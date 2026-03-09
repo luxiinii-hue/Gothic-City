@@ -1,0 +1,61 @@
+[
+    {
+        "id": "mysterious_fountain",
+        "name": "Mysterious Fountain",
+        "text": "You discover a glowing fountain in a hidden alcove. Its waters shimmer with an otherworldly light.",
+        "choices": [
+            {
+                "text": "Drink from the fountain",
+                "outcomes": [
+                    {"weight": 60, "type": "heal", "value": 20, "message": "The water revitalizes you! Healed 20 HP."},
+                    {"weight": 40, "type": "damage", "value": 10, "message": "The water burns! You take 10 damage."}
+                ]
+            },
+            {
+                "text": "Leave it alone",
+                "outcomes": [
+                    {"weight": 100, "type": "none", "message": "You move on cautiously."}
+                ]
+            }
+        ]
+    },
+    {
+        "id": "wandering_merchant",
+        "name": "Wandering Merchant",
+        "text": "A cloaked figure offers you a suspicious deal. 'Trade some life force for power, perhaps?'",
+        "choices": [
+            {
+                "text": "Accept the deal (-10 HP, +3 STR)",
+                "outcomes": [
+                    {"weight": 100, "type": "trade", "hp_cost": 10, "stat": "strength", "value": 3, "message": "You feel stronger, but weaker."}
+                ]
+            },
+            {
+                "text": "Decline politely",
+                "outcomes": [
+                    {"weight": 100, "type": "gold", "value": 5, "message": "The merchant tosses you a few coins for your time."}
+                ]
+            }
+        ]
+    },
+    {
+        "id": "ancient_tome",
+        "name": "Ancient Tome",
+        "text": "An ancient book lies on a dusty pedestal. Its pages glow faintly.",
+        "choices": [
+            {
+                "text": "Read the tome",
+                "outcomes": [
+                    {"weight": 50, "type": "stat_boost", "stat": "strength", "value": 1, "message": "You gain arcane knowledge! +1 STR."},
+                    {"weight": 50, "type": "stat_boost", "stat": "speed", "value": 1, "message": "Your reflexes sharpen! +1 SPD."}
+                ]
+            },
+            {
+                "text": "Take the tome to sell",
+                "outcomes": [
+                    {"weight": 100, "type": "gold", "value": 15, "message": "You pocket the tome. +15 gold."}
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,110 @@
+[
+    {
+        "id": "shadow_bolt",
+        "name": "Shadow Bolt",
+        "description": "Hurls a bolt of dark energy at a single enemy.",
+        "targeting": "single_enemy",
+        "base_damage": 15,
+        "scaling": 1.0,
+        "cooldown": 2,
+        "effects": [],
+        "icon": "UI/ability_icons/Icon19.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Water Ball",
+            "tint": [150, 80, 255],
+            "scale": 80,
+            "duration": 0.6
+        }
+    },
+    {
+        "id": "shield_bash",
+        "name": "Shield Bash",
+        "description": "Smashes the target with a holy shield, stunning them for 1 turn.",
+        "targeting": "single_enemy",
+        "base_damage": 10,
+        "scaling": 1.0,
+        "cooldown": 3,
+        "effects": [{"type": "stun", "duration": 1}],
+        "icon": "UI/ability_icons/Icon16.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Fire Spell",
+            "tint": null,
+            "scale": 80,
+            "duration": 0.5
+        }
+    },
+    {
+        "id": "arcane_blast",
+        "name": "Arcane Blast",
+        "description": "Unleashes arcane energy that strikes all enemies.",
+        "targeting": "all_enemies",
+        "base_damage": 12,
+        "scaling": 1.0,
+        "cooldown": 3,
+        "effects": [],
+        "icon": "UI/ability_icons/Icon7.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Fire Ball",
+            "tint": null,
+            "scale": 80,
+            "duration": 0.6
+        }
+    },
+    {
+        "id": "savage_rend",
+        "name": "Savage Rend",
+        "description": "A vicious slash that rends the target with brutal force.",
+        "targeting": "single_enemy",
+        "base_damage": 18,
+        "scaling": 1.2,
+        "cooldown": 2,
+        "effects": [],
+        "icon": "UI/weapon_icons/Icon28_09.png",
+        "animation": {
+            "type": "melee_slash",
+            "sprite": "UI/weapon_icons/Icon28_09.png",
+            "tint": [100, 255, 80],
+            "scale": 64,
+            "duration": 0.3
+        }
+    },
+    {
+        "id": "twin_shot",
+        "name": "Twin Shot",
+        "description": "Fires two rapid arrows at a single target.",
+        "targeting": "single_enemy",
+        "base_damage": 7,
+        "scaling": 0.8,
+        "cooldown": 1,
+        "effects": [],
+        "icon": "UI/ability_icons/Icon5.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Water Arrow",
+            "tint": [120, 255, 100],
+            "scale": 80,
+            "duration": 0.5
+        }
+    },
+    {
+        "id": "summon_cultist",
+        "name": "Summon Cultist",
+        "description": "Calls forth cultist minions to fight alongside the warlock.",
+        "targeting": "self",
+        "base_damage": 0,
+        "scaling": 0.0,
+        "cooldown": 4,
+        "effects": [{"type": "summon", "value": 1, "duration": 0, "enemy_id": "cultist_minion"}],
+        "icon": "UI/ability_icons/Icon18.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Fire Spell",
+            "tint": [200, 80, 255],
+            "scale": 80,
+            "duration": 0.6
+        }
+    }
+]

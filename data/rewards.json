@@ -1,0 +1,99 @@
+[
+    {
+        "id": "hp_boost",
+        "name": "+5 Max HP",
+        "type": "stat_boost",
+        "rarity": "common",
+        "stat": "max_hp",
+        "value": 5,
+        "description": "Increases maximum HP by 5",
+        "cost": 30
+    },
+    {
+        "id": "str_boost",
+        "name": "+2 Strength",
+        "type": "stat_boost",
+        "rarity": "common",
+        "stat": "strength",
+        "value": 2,
+        "description": "Increases strength by 2",
+        "cost": 35
+    },
+    {
+        "id": "spd_boost",
+        "name": "+1 Speed",
+        "type": "stat_boost",
+        "rarity": "common",
+        "stat": "speed",
+        "value": 1,
+        "description": "Increases speed by 1",
+        "cost": 30
+    },
+    {
+        "id": "arm_boost",
+        "name": "+3 Armor",
+        "type": "stat_boost",
+        "rarity": "common",
+        "stat": "armor",
+        "value": 3,
+        "description": "Increases armor by 3",
+        "cost": 40
+    },
+    {
+        "id": "piercing",
+        "name": "Piercing",
+        "type": "ability_mod",
+        "rarity": "uncommon",
+        "effect": "piercing",
+        "description": "Attacks ignore 50% of target armor",
+        "cost": 60
+    },
+    {
+        "id": "vampiric",
+        "name": "Vampiric",
+        "type": "ability_mod",
+        "rarity": "uncommon",
+        "effect": "vampiric",
+        "description": "Heal 20% of damage dealt",
+        "cost": 65
+    },
+    {
+        "id": "burning",
+        "name": "Burning",
+        "type": "ability_mod",
+        "rarity": "uncommon",
+        "effect": "burning",
+        "description": "Attacks apply burn (3 damage per turn for 2 turns)",
+        "cost": 55
+    },
+    {
+        "id": "relic_hp",
+        "name": "Vitality Crystal",
+        "type": "relic",
+        "rarity": "rare",
+        "effect": "team_hp_boost",
+        "value": 0.1,
+        "description": "All allies gain +10% max HP",
+        "cost": 80
+    },
+    {
+        "id": "relic_armor",
+        "name": "Iron Aegis",
+        "type": "relic",
+        "rarity": "rare",
+        "effect": "team_armor",
+        "value": 3,
+        "description": "All allies gain +3 armor",
+        "cost": 80
+    },
+    {
+        "id": "relic_block",
+        "name": "Warding Stone",
+        "type": "relic",
+        "rarity": "rare",
+        "effect": "start_block",
+        "value": 5,
+        "description": "All allies start combat with 5 block",
+        "cost": 75
+    }
+]
