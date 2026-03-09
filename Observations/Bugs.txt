@@ -1,0 +1,4 @@
+1. During character creation the number 1 character (playble) is switching around a little unpredictably. It should be Clear which charater is selected to be the playable character
+
+2. The Boss doesn't seem to summon any minions (this may be something not working properly or too slow cast time)
+
