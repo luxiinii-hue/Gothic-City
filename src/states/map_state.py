@@ -69,29 +69,41 @@ NODE_TO_PROP = {
 
 class MapState(BaseState):
     def enter(self, **kwargs):
+        print("MapState: Entering...")
         self.time = 0.0
 
         # Initialize run if team is passed (first entry)
         if "team" in kwargs:
+            print("MapState: Initializing run...")
             map_nodes = generate_map()
             self.game.run_manager = RunManager(kwargs["team"], map_nodes)
             
             # Start background music
             try:
                 if pygame.mixer.get_init():
+                    print("MapState: Loading music...")
                     pygame.mixer.music.load("audio/music/Break Their Will.mp3")
                     # Volume controlled by global settings
                     vol = self.game.settings.volume if not self.game.settings.muted else 0.0
                     pygame.mixer.music.set_volume(vol)
                     pygame.mixer.music.play(-1)
+                    print("MapState: Music playing.")
             except Exception as e:
                 print(f"Could not load music: {e}")
 
         self.run = self.game.run_manager
         
+        # Safety check for run manager
+        if not self.run:
+            print("Error: MapState entered without an active RunManager")
+            self.game.state_machine.transition(GameState.TITLE)
+            return
+
         # Pre-render ribbons/bridges
+        print("MapState: Rendering bridges...")
         self._bridge_cache_surface = None
         self._render_bridges()
+        print("MapState: Enter complete.")
 
         self.overlay = None
         self.overlay_data = None
@@ -108,14 +120,21 @@ class MapState(BaseState):
         try:
             ribbon_img = am.load_image("UI/ribbons/set_01/path_horizontal.png")
             rw, rh = ribbon_img.get_size()
+            if rw <= 0: return # Safety
             # Scale down the bridge width slightly for better fit
             rh = 16
             ribbon_img = pygame.transform.smoothscale(ribbon_img, (rw, rh))
+            # Refresh size after scale
+            rw, _ = ribbon_img.get_size()
         except Exception:
+            return
+
+        if not self.run or not self.run.map_nodes:
             return
 
         for node in self.run.map_nodes:
             for cid in node.connections:
+                if cid >= len(self.run.map_nodes): continue # Safety
                 target = self.run.map_nodes[cid]
                 dx = target.screen_x - node.screen_x
                 dy = target.screen_y - node.screen_y
@@ -125,8 +144,10 @@ class MapState(BaseState):
                 angle = math.degrees(math.atan2(-dy, dx))
                 
                 # Create a flat strip for the distance
-                strip = pygame.Surface((int(dist), rh), pygame.SRCALPHA)
-                for i in range(0, int(dist), rw):
+                # Clamp distance to something reasonable
+                draw_dist = int(min(dist, 2000))
+                strip = pygame.Surface((draw_dist, rh), pygame.SRCALPHA)
+                for i in range(0, draw_dist, rw):
                     strip.blit(ribbon_img, (i, 0))
                 
                 # Rotate the strip
@@ -153,35 +174,43 @@ class MapState(BaseState):
                     "Backgrounds/gothic_city/gothic_street.png",
                     SCREEN_WIDTH, SCREEN_HEIGHT)
                 bg.blit(img, (0, 0))
-                # Dark blue tint for dungeon map feel
+                # Even lighter tint (120 instead of 160) to avoid "Black Screen" look
                 tint = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-                tint.fill((5, 5, 20, 200))
+                tint.fill((5, 5, 20, 120))
                 bg.blit(tint, (0, 0))
             except Exception:
-                bg.fill((10, 10, 15))
+                bg.fill((40, 40, 55))
             self._bg_cache = bg
         return self._bg_cache
 
     def draw(self, surface: pygame.Surface):
-        surface.blit(self._get_bg(), (0, 0))
+        try:
+            surface.blit(self._get_bg(), (0, 0))
 
-        # Draw pre-rendered ribbon bridges
-        if self._bridge_cache_surface:
-            surface.blit(self._bridge_cache_surface, (0, 0))
+            # Draw pre-rendered ribbon bridges
+            if self._bridge_cache_surface:
+                surface.blit(self._bridge_cache_surface, (0, 0))
 
-        # Draw nodes
-        for node in self.run.map_nodes:
-            self._draw_node(surface, node)
+            # Draw nodes
+            for node in self.run.map_nodes:
+                self._draw_node(surface, node)
 
-        # Sidebar: team info
-        self._draw_sidebar(surface)
+            # Sidebar: team info
+            self._draw_sidebar(surface)
 
-        # Overlay
-        if self.overlay:
-            self._draw_overlay(surface)
+            # Overlay
+            if self.overlay:
+                self._draw_overlay(surface)
 
-        if self.show_menu_confirm:
-            self._draw_menu_confirm(surface)
+            if self.show_menu_confirm:
+                self._draw_menu_confirm(surface)
+        except Exception as e:
+            surface.fill((20, 0, 0))
+            draw_text(surface, f"Draw Error: {e}", 20, 20, size=20, color=RED)
+            import traceback
+            trace = traceback.format_exc().splitlines()
+            for i, line in enumerate(trace[-10:]):
+                draw_text(surface, line, 20, 50 + i * 20, size=14, color=WHITE)
 
     def _draw_node(self, surface: pygame.Surface, node: MapNode):
         am = self.game.asset_manager
