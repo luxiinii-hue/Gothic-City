@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 build/
 .pygbag/
+*.apk
+*.tar.gz
