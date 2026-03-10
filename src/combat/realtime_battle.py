@@ -49,6 +49,13 @@ def rank_to_pos(rank: int, team: str) -> tuple[float, float]:
     y = COMBAT_Y_CENTER + (rank - 1) * RANK_Y_STAGGER
     return float(x), float(y)
 
+def get_unit_pos(unit: CombatUnit) -> tuple[float, float]:
+    """Calculate screen x,y taking unit size into account."""
+    x, y = rank_to_pos(unit.rank, unit.team)
+    if getattr(unit, 'size', 1) > 1:
+        y += (unit.size - 1) * RANK_Y_STAGGER / 2.0
+    return float(x), float(y)
+
 
 class RealtimeBattle:
     def __init__(self, player_units: list[CombatUnit],
@@ -82,30 +89,34 @@ class RealtimeBattle:
         """Assign sequential ranks 1..N to alive units, sorted by default_rank."""
         alive = [u for u in units if u.alive]
         alive.sort(key=lambda u: u.rank)
-        for i, u in enumerate(alive):
-            u.rank = i + 1
+        current_rank = 1
+        for u in alive:
+            u.rank = current_rank
+            current_rank += getattr(u, 'size', 1)
 
     def _sync_positions(self):
         """Set unit x,y from their rank."""
         for unit in self.all_units:
-            unit.x, unit.y = rank_to_pos(unit.rank, unit.team)
+            unit.x, unit.y = get_unit_pos(unit)
 
     def _slide_ranks(self, team_units: list[CombatUnit]):
         """After a death, slide surviving units forward (close rank gaps)."""
         alive = [u for u in team_units if u.alive]
         alive.sort(key=lambda u: u.rank)
         changed = False
-        for i, u in enumerate(alive):
-            new_rank = i + 1
+        current_rank = 1
+        for u in alive:
+            new_rank = current_rank
             if u.rank != new_rank:
                 old_rank = u.rank
                 u.rank = new_rank
-                u.x, u.y = rank_to_pos(new_rank, u.team)
+                u.x, u.y = get_unit_pos(u)
                 self._actions.append(BattleAction(
                     type="rank_slide", target=u.name,
                     message=f"{u.name} moves to rank {new_rank}",
                 ))
                 changed = True
+            current_rank += getattr(u, 'size', 1)
         return changed
 
     def update(self, dt: float) -> list[BattleAction]:
@@ -324,9 +335,9 @@ class RealtimeBattle:
         if not template:
             return
         alive_enemies = [u for u in self.enemy_units if u.alive]
-        alive_count = len(alive_enemies) + len(self._pending_units)
+        occupied_ranks = sum(getattr(u, 'size', 1) for u in alive_enemies + self._pending_units)
         for _ in range(max(1, count)):
-            if alive_count >= MAX_RANKS:
+            if occupied_ranks + getattr(template, 'size', 1) > MAX_RANKS:
                 break
             
             existing_names = [u.name for u in self.enemy_units + self._pending_units]
@@ -347,13 +358,14 @@ class RealtimeBattle:
                 gold_reward=template.gold_reward,
                 color=template.color,
                 idle_config=template.idle_config,
+                size=getattr(template, 'size', 1),
             )
             new_unit = CombatUnit.from_enemy(edata)
-            new_unit.rank = alive_count + 1
-            new_unit.x, new_unit.y = rank_to_pos(new_unit.rank, "enemy")
+            new_unit.rank = occupied_ranks + 1
+            new_unit.x, new_unit.y = get_unit_pos(new_unit)
             new_unit._summon_edata = edata
             self._pending_units.append(new_unit)
-            alive_count += 1
+            occupied_ranks += getattr(new_unit, 'size', 1)
             self._actions.append(BattleAction(
                 type="summon", source=summoner.name,
                 target=new_unit.name,
@@ -419,6 +431,10 @@ class RealtimeBattle:
     def _apply_position_effect(self, source: CombatUnit, target: CombatUnit,
                                 effect_type: str, value: int):
         """Handle push, pull, self_move, and swap rank changes."""
+        # Large units (bosses) are immune to positional changes
+        if getattr(target, 'size', 1) > 1:
+            return
+            
         if effect_type == "swap":
             if source == target or source.team != target.team:
                 return

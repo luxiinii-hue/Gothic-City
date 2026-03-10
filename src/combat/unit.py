@@ -16,7 +16,7 @@ class CombatUnit:
                  max_hp: int, strength: int, armor: int, speed: int,
                  ability_ids: list[str], passive: str | None = None,
                  ability_mods: list[str] | None = None,
-                 default_rank: int = 1):
+                 default_rank: int = 1, size: int = 1):
         self.id = unit_id
         self.name = name
         self.team = team  # "player" or "enemy"
@@ -30,6 +30,7 @@ class CombatUnit:
         self.passive = passive
         self.ability_mods = ability_mods or []
         self.on_death_ability: str = ""
+        self.size = size
 
         # Rank position in the lane (1 = front, 4 = back)
         self.rank: int = default_rank
@@ -186,6 +187,7 @@ class CombatUnit:
             speed=enemy_data.speed,
             ability_ids=list(enemy_data.abilities),
             default_rank=1,  # enemies get sequential ranks assigned externally
+            size=getattr(enemy_data, 'size', 1),
         )
         if hasattr(enemy_data, 'on_death_ability'):
             unit.on_death_ability = enemy_data.on_death_ability

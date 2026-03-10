@@ -163,7 +163,8 @@
             "glow_radius_factor": 0.3,
             "glow_alpha_min": 10,
             "glow_alpha_max": 30
-        }
+        },
+        "size": 2
     },
     {
         "id": "cultist_minion",
