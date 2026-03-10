@@ -170,6 +170,31 @@ def spawn_projectile_trail(emitter: ParticleEmitter, x: float, y: float, color: 
     emitter.emit_burst(x, y, 1, color, speed_range=(0, 10),
                        lifetime=0.3, size_range=(1, 3), gravity=5.0)
 
+def spawn_void_step(emitter: ParticleEmitter, x: float, y: float):
+    """Purple/black teleportation swirl."""
+    emitter.emit_burst(x, y, 20, (120, 40, 180), speed_range=(20, 50),
+                       lifetime=0.6, size_range=(2, 4), gravity=-10.0)
+
+def spawn_holy_provocation(emitter: ParticleEmitter, x: float, y: float):
+    """Golden outward flash."""
+    emitter.emit_burst(x, y, 25, (255, 200, 80), speed_range=(60, 120),
+                       lifetime=0.5, size_range=(3, 5), gravity=0.0)
+
+def spawn_ignite(emitter: ParticleEmitter, x: float, y: float):
+    """Fiery embers."""
+    emitter.emit_burst(x, y, 15, (255, 80, 40), speed_range=(40, 90),
+                       lifetime=0.5, size_range=(2, 4), gravity=-30.0)
+
+def spawn_bloodlust_charge(emitter: ParticleEmitter, x: float, y: float):
+    """Red bloody slash trails."""
+    emitter.emit_burst(x, y, 20, (200, 40, 40), speed_range=(80, 150),
+                       lifetime=0.4, size_range=(3, 6), gravity=20.0)
+
+def spawn_caltrops(emitter: ParticleEmitter, x: float, y: float):
+    """Grey spikes dropping."""
+    emitter.emit_burst(x, y, 15, (150, 150, 150), speed_range=(30, 60),
+                       lifetime=0.8, size_range=(2, 3), gravity=80.0)
+
 # Map ability names to spawn functions
 ABILITY_PARTICLES = {
     "Shadow Bolt": spawn_shadow_bolt,
@@ -177,4 +202,9 @@ ABILITY_PARTICLES = {
     "Arcane Blast": spawn_arcane_blast,
     "Savage Rend": spawn_savage_rend,
     "Twin Shot": spawn_twin_shot,
+    "Void Step": spawn_void_step,
+    "Holy Provocation": spawn_holy_provocation,
+    "Ignite": spawn_ignite,
+    "Bloodlust Charge": spawn_bloodlust_charge,
+    "Caltrops": spawn_caltrops,
 }

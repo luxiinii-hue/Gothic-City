@@ -53,11 +53,26 @@ class CombatUnit:
     def is_stunned(self) -> bool:
         return any(b.type == "stun" and b.duration > 0 for b in self.buffs)
 
+    @property
+    def has_taunt(self) -> bool:
+        return any(b.type == "taunt" and b.duration > 0 for b in self.buffs)
+
+    @property
+    def has_phase(self) -> bool:
+        return any(b.type == "phase" and b.duration > 0 for b in self.buffs)
+
     def tick_speed_bar(self, dt: float) -> bool:
         """Fill the speed bar. Returns True if bar just filled (trigger auto-attack)."""
         if self.is_stunned:
             return False
-        self.speed_bar += self.speed_bar_fill_rate * dt
+            
+        fill_rate = self.speed_bar_fill_rate
+        if any(b.type == "haste" and b.duration > 0 for b in self.buffs):
+            fill_rate *= 1.5
+        if any(b.type == "slow" and b.duration > 0 for b in self.buffs):
+            fill_rate *= 0.5
+            
+        self.speed_bar += fill_rate * dt
         if self.speed_bar >= 1.0:
             self.speed_bar = 0.0
             return True
@@ -72,21 +87,15 @@ class CombatUnit:
         """Tick buffs in real-time. Returns burn damage if a tick fires."""
         damage = 0
         for buff in self.buffs:
-            if buff.type == "burn" and buff.duration > 0:
-                if not hasattr(buff, '_tick_timer'):
-                    buff._tick_timer = 0.0
-                buff._tick_timer += dt
-                if buff._tick_timer >= 1.0:
-                    buff._tick_timer -= 1.0
+            if not hasattr(buff, '_tick_timer'):
+                buff._tick_timer = 0.0
+            buff._tick_timer += dt
+            if buff._tick_timer >= 1.0:
+                buff._tick_timer -= 1.0
+                if buff.type == "burn":
                     damage += int(buff.value)
-                    buff.duration -= 1
-            elif buff.type == "stun":
-                if not hasattr(buff, '_tick_timer'):
-                    buff._tick_timer = 0.0
-                buff._tick_timer += dt
-                if buff._tick_timer >= 1.0:
-                    buff._tick_timer -= 1.0
-                    buff.duration -= 1
+                buff.duration -= 1
+                
         self.buffs = [b for b in self.buffs if b.duration > 0]
         return damage
 
@@ -133,13 +142,13 @@ class CombatUnit:
 
         # Determine passive based on role
         passive = None
-        if char_data.id == "acoc1":
+        if char_data.id == "pep1":
             passive = "phase"  # 25% dodge
-        elif char_data.id == "acoc2":
+        elif char_data.id == "pep2":
             passive = "flame_aura"  # reflect 20% damage
-        elif char_data.id == "acoc3":
+        elif char_data.id == "pep3":
             passive = "mana_surge"  # +10% ability damage per 5s
-        elif char_data.id == "acoc4":
+        elif char_data.id == "pep4":
             passive = "rage"  # +25% damage when below 50% HP
 
         default_rank = getattr(char_data, 'default_rank', 2)

@@ -1,4 +1,4 @@
-# Dungeon of the Acoc
+# Gothic City of Pepruvia
 
 ## Asset Conventions
 - All game-ready assets live under `character assets/` in organized subdirectories:

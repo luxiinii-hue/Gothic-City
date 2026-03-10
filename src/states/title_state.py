@@ -71,7 +71,7 @@ class TitleState(BaseState):
         cx = SCREEN_WIDTH // 2
 
         # Title
-        draw_text(surface, "Dungeon of the Acoc", cx, 180,
+        draw_text(surface, "Gothic City of Pepruvia", cx, 180,
                   size=FONT_SIZE_TITLE, color=GOLD, center=True, font_type="title")
 
         # Decorative line

@@ -25,9 +25,19 @@ def get_front_rank_enemies(enemies: list[CombatUnit], max_rank: int = 2) -> list
     return [u for u in enemies if u.alive and u.rank <= max_rank]
 
 
+def get_taunted_target(enemies: list[CombatUnit], max_rank: int = 4) -> CombatUnit | None:
+    """Return the front-most alive enemy with the taunt buff (within max_rank)."""
+    taunted = [u for u in enemies if u.alive and u.has_taunt and u.rank <= max_rank]
+    if not taunted:
+        return None
+    return min(taunted, key=lambda u: u.rank)
+
 def get_auto_attack_target(source: CombatUnit,
                            enemies: list[CombatUnit]) -> CombatUnit | None:
-    """Auto-attacks always target the front-most enemy."""
+    """Auto-attacks target the front-most enemy, respecting taunt."""
+    taunted = get_taunted_target(enemies)
+    if taunted:
+        return taunted
     return get_front_enemy(enemies)
 
 
@@ -42,13 +52,21 @@ def get_targets(targeting: str, source: CombatUnit,
     if targeting == "single_enemy":
         if ability_range == "melee":
             # Melee: can only hit front ranks (1-2)
+            taunted = get_taunted_target(enemies, max_rank=2)
+            if taunted:
+                return [taunted]
+            
             front = get_front_rank_enemies(enemies, max_rank=2)
             if front:
                 return [min(front, key=lambda u: u.rank)]
             # Fallback: hit whoever is available
             return [get_front_enemy(enemies)] if alive_enemies else []
         else:
-            # Ranged: target front-most by default
+            # Ranged: target front-most by default, or taunted
+            taunted = get_taunted_target(enemies)
+            if taunted:
+                return [taunted]
+                
             target = get_front_enemy(enemies)
             return [target] if target else []
 

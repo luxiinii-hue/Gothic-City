@@ -294,7 +294,7 @@ class MapState(BaseState):
 
         # Draw NPC on the left
         try:
-            npc_image = self.game.asset_manager.get_scaled("Other NPCs/Dungeon_of_the_Acoc7.png", 200, 200)
+            npc_image = self.game.asset_manager.get_scaled("Other NPCs/Pepruvia_NPC_Shop.png", 200, 200)
             npc_rect = npc_image.get_rect(center=(cx - 150, cy + 20))
             # Idle bob
             bob = int(math.sin(self.time * 2.0) * 5)

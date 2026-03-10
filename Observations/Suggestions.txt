@@ -1,1 +1,6 @@
-1. Button for escaping to menu. 
+1. During the choose reward screen, if you click outside of the area when selecting a character to give the buff it should revert back to the selection of the buff (this helps in case the wrong option was clicked and allows to change).
+2. clicking on other character should automatically deselect the side-character and set that as side-character
+3. Ability Cards in events. These will be specific to types of classes (e.g. Magic wielders may find Fireball/waterball fighting classes may find sweep/etc). These will be added to the roster of abilities. Max number of abilities should be 3. If a character has too many abilities it should be possible to Select which ones you want active (it should be possible to rearrange abilities for the Ally as well). 
+3.1 Ability Cards can also be character specific (move Nightfang's ability here for instance). 
+4. A scaling formula to allow the game to continue on indefinitely. Might require its own plan section.
+5. Tilt the map to be horizontally moving to the right instead of a top-Down view

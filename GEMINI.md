@@ -1,8 +1,8 @@
-# Dungeon of the Acoc
+# Gothic City of Pepruvia
 
 ## Project Overview
 
-**Dungeon of the Acoc** is a 2D game built with Python and the `pygame-ce` (Pygame Community Edition) library. The game features a structured, object-oriented architecture built around a core state machine. It is designed with separation of concerns in mind, dividing logic into specific subsystems like combat, map generation, animation, entities, and UI.
+**Gothic City of Pepruvia** is a 2D game built with Python and the `pygame-ce` (Pygame Community Edition) library. The game features a structured, object-oriented architecture built around a core state machine. It is designed with separation of concerns in mind, dividing logic into specific subsystems like combat, map generation, animation, entities, and UI.
 
 **Key Architecture Components:**
 *   **State Machine (`src/states/`, `src/core/state_machine.py`):** The game flow is driven by discrete states including Title, Team Select, Map, Combat, Reward, and Result. 

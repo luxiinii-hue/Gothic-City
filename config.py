@@ -6,7 +6,7 @@ import os
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 FPS = 60
-TITLE = "Dungeon of the Acoc"
+TITLE = "Gothic City of Pepruvia"
 
 # Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -100,9 +100,9 @@ CLASS_COLORS = {
 }
 
 CLASS_ATTACK_SPRITES = {
-    "acoc1": "UI/weapon_icons/Icon28_19.png",   # Shadow Wraith (purple projectile/dagger)
-    "acoc2": "UI/weapon_icons/Icon28_09.png",   # Flame Knight (sword)
-    "acoc3": "UI/weapon_icons/Icon28_15.png",   # Goblin Mage (wand/orb)
-    "acoc4": "UI/weapon_icons/Icon28_28.png",   # Nightfang (axe/claw)
-    "acoc5": "UI/weapon_icons/Icon28_13.png",   # Briarfoot (arrow)
+    "pep1": "UI/weapon_icons/Icon28_19.png",   # Shadow Wraith (purple projectile/dagger)
+    "pep2": "UI/weapon_icons/Icon28_09.png",   # Flame Knight (sword)
+    "pep3": "UI/weapon_icons/Icon28_15.png",   # Goblin Mage (wand/orb)
+    "pep4": "UI/weapon_icons/Icon28_28.png",   # Nightfang (axe/claw)
+    "pep5": "UI/weapon_icons/Icon28_13.png",   # Briarfoot (arrow)
 }

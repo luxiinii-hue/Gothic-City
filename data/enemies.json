@@ -2,7 +2,7 @@
     {
         "id": "fat_fly",
         "name": "Fat Fly",
-        "sprite": "Enemies/Dungeon_of_the_Acoc8.png",
+        "sprite": "Enemies/Pepruvia_Enemy_Fly.png",
         "max_hp": 25,
         "strength": 2,
         "armor": 0,
@@ -22,7 +22,7 @@
     {
         "id": "goblin_brute",
         "name": "Goblin Brute",
-        "sprite": "Enemies/Dungeon_of_the_AcocGob1.png",
+        "sprite": "Enemies/Pepruvia_Enemy_Goblin1.png",
         "max_hp": 40,
         "strength": 4,
         "armor": 1,
@@ -42,7 +42,7 @@
     {
         "id": "goblin_sentinel",
         "name": "Goblin Sentinel",
-        "sprite": "Enemies/Dungeon_of_the_AcocGob2.png",
+        "sprite": "Enemies/Pepruvia_Enemy_Goblin2.png",
         "max_hp": 55,
         "strength": 2,
         "armor": 3,
@@ -62,7 +62,7 @@
     {
         "id": "goblin_assassin",
         "name": "Goblin Assassin",
-        "sprite": "Enemies/Dungeon_of_the_AcocGob3.png",
+        "sprite": "Enemies/Pepruvia_Enemy_Goblin3.png",
         "max_hp": 45,
         "strength": 5,
         "armor": 0,
@@ -82,7 +82,7 @@
     {
         "id": "bloated_fly",
         "name": "Bloated Fly",
-        "sprite": "Enemies/Dungeon_of_the_Acoc8.png",
+        "sprite": "Enemies/Pepruvia_Enemy_Fly.png",
         "max_hp": 70,
         "strength": 4,
         "armor": 1,
@@ -102,7 +102,7 @@
     {
         "id": "goblin_warlock",
         "name": "Goblin Warlock",
-        "sprite": "Enemies/Dungeon_of_the_AcocGob4.png",
+        "sprite": "Enemies/Pepruvia_Enemy_Boss.png",
         "max_hp": 160,
         "strength": 5,
         "armor": 3,

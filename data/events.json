@@ -62,12 +62,12 @@
         "id": "abyssal_altar",
         "name": "Abyssal Altar",
         "text": "A cracked altar pulses with dark energy. Ancient runes depict a monstrous figure bringing down a colossal fist. Nightfang feels a primal resonance.",
-        "requires_char": "acoc4",
+        "requires_char": "pep4",
         "choices": [
             {
                 "text": "Channel the altar's power (-15 HP)",
                 "outcomes": [
-                    {"weight": 100, "type": "ability_unlock", "char_id": "acoc4", "ability_id": "abyssal_smash", "hp_cost": 15, "message": "Dark power surges through Nightfang! Learned Abyssal Smash!"}
+                    {"weight": 100, "type": "ability_unlock", "char_id": "pep4", "ability_id": "abyssal_smash", "hp_cost": 15, "message": "Dark power surges through Nightfang! Learned Abyssal Smash!"}
                 ]
             },
             {

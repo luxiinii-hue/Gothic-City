@@ -32,11 +32,11 @@ class BattleAction:
 MAX_RANKS = 4
 
 CLASS_ATTACK_COLORS = {
-    "acoc1": (150, 80, 255),   # Shadow Wraith — purple
-    "acoc2": (80, 140, 220),   # Flame Knight — blue
-    "acoc3": (200, 100, 180),  # Goblin Mage — pink
-    "acoc4": (200, 60, 60),    # Nightfang — red
-    "acoc5": (80, 180, 80),    # Briarfoot — green
+    "pep1": (150, 80, 255),   # Shadow Wraith — purple
+    "pep2": (80, 140, 220),   # Flame Knight — blue
+    "pep3": (200, 100, 180),  # Goblin Mage — pink
+    "pep4": (200, 60, 60),    # Nightfang — red
+    "pep5": (80, 180, 80),    # Briarfoot — green
 }
 
 
@@ -67,6 +67,7 @@ class RealtimeBattle:
         self.result: str | None = None
         self._actions: list[BattleAction] = []
         self._pending_units: list[CombatUnit] = []
+        self.rank_hazards: dict[tuple[str, int], dict] = {}
 
         # Assign sequential ranks and set initial positions
         self._assign_ranks(self.player_units)
@@ -373,6 +374,22 @@ class RealtimeBattle:
                         ability_name=ability.name, heal=healed,
                         message=f"{target.name} healed for {healed}!",
                     ))
+                elif effect.type == "swap":
+                    self._apply_position_effect(unit, target, "swap", effect.value)
+                elif effect.type == "taunt":
+                    target.add_buff("taunt", effect.duration)
+                    self._actions.append(BattleAction(
+                        type="hit", source=unit.name, target=target.name,
+                        ability_name=ability.name,
+                        message=f"{target.name} gains Taunt!",
+                    ))
+                elif effect.type == "phase":
+                    target.add_buff("phase", effect.duration)
+                    self._actions.append(BattleAction(
+                        type="hit", source=unit.name, target=target.name,
+                        ability_name=ability.name,
+                        message=f"{target.name} gains Phase!",
+                    ))
         self._actions.append(BattleAction(
             type="ability", source=unit.name,
             ability_name=ability.name,
@@ -381,7 +398,26 @@ class RealtimeBattle:
 
     def _apply_position_effect(self, source: CombatUnit, target: CombatUnit,
                                 effect_type: str, value: int):
-        """Handle push, pull, and self_move rank changes."""
+        """Handle push, pull, self_move, and swap rank changes."""
+        if effect_type == "swap":
+            if source == target or source.team != target.team:
+                return
+            s_rank, t_rank = source.rank, target.rank
+            source.rank = t_rank
+            source.x, source.y = rank_to_pos(t_rank, source.team)
+            target.rank = s_rank
+            target.x, target.y = rank_to_pos(s_rank, target.team)
+            
+            self._actions.append(BattleAction(
+                type="rank_slide", target=source.name,
+                message=f"{source.name} swaps to rank {t_rank}",
+            ))
+            self._actions.append(BattleAction(
+                type="rank_slide", target=target.name,
+                message=f"{target.name} swaps to rank {s_rank}",
+            ))
+            return
+
         team_units = (self.player_units if target.team == "player"
                       else self.enemy_units)
         alive = [u for u in team_units if u.alive]
@@ -419,6 +455,18 @@ class RealtimeBattle:
             message=f"{target.name} pushed {direction} to rank {new_rank}",
         ))
 
+        # Check for rank hazards
+        hazard = self.rank_hazards.get((target.team, new_rank))
+        if hazard:
+            actual = target.take_damage(hazard["damage"])
+            target.reduce_atb(hazard.get("atb_loss", 0.0))
+            self._actions.append(BattleAction(
+                type="hit", source=hazard["source"], target=target.name,
+                damage=actual,
+                message=f"{target.name} triggered a trap at rank {new_rank}!"
+            ))
+            del self.rank_hazards[(target.team, new_rank)]
+
     def _apply_projectile_hit(self, proj: Projectile):
         """Apply damage when a projectile arrives at its target."""
         if proj.is_aoe:
@@ -442,12 +490,20 @@ class RealtimeBattle:
 
     def _apply_hit(self, proj: Projectile, target: CombatUnit):
         """Apply projectile damage to a target unit."""
-        # Phase passive: 25% dodge
-        if target.passive == "phase" and random.random() < 0.25:
+        # Dodge logic (Phase buff/passive, Fat Fly passive)
+        dodge_chance = 0.0
+        if target.passive == "phase":
+            dodge_chance += 0.25
+        if target.has_phase:
+            dodge_chance += 1.0
+        if target.id == "fat_fly" and target.rank == 1:
+            dodge_chance += 0.50
+
+        if random.random() < dodge_chance:
             self._actions.append(BattleAction(
                 type="dodge", source=proj.source_name, target=target.name,
                 ability_name=proj.ability_name,
-                message=f"{target.name} phases through the attack!",
+                message=f"{target.name} dodges the attack!",
             ))
             return
 
@@ -516,6 +572,16 @@ class RealtimeBattle:
                     ))
                 elif effect.type == "armor_pierce":
                     pass  # Handled via proj flag above
+                elif effect.type == "trap":
+                    self.rank_hazards[(target.team, target.rank)] = {
+                        "damage": effect.value,
+                        "atb_loss": 0.5,
+                        "source": proj.source_name
+                    }
+                    self._actions.append(BattleAction(
+                        type="ability", source=proj.source_name, target=target.name,
+                        message=f"{proj.source_name} laid a trap at Rank {target.rank}!"
+                    ))
                 elif effect.type == "life_drain":
                     if source_unit and actual > 0:
                         healed = min(actual, source_unit.max_hp - source_unit.hp)
@@ -526,6 +592,13 @@ class RealtimeBattle:
                             heal=healed,
                             message=f"{source_unit.name} drains {healed} HP!",
                         ))
+                elif effect.type == "burn":
+                    target.add_buff("burn", effect.duration, value=effect.value)
+                    self._actions.append(BattleAction(
+                        type="burn_applied", source=proj.source_name,
+                        target=target.name,
+                        message=f"{target.name} is burning!",
+                    ))
 
         # Burning mod
         if "burning" in proj.ability_mods:

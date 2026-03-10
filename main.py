@@ -1,4 +1,4 @@
-"""Entry point for Dungeon of the Acoc."""
+"""Entry point for Gothic City of Pepruvia."""
 
 import asyncio
 import pygame

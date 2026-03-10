@@ -13,7 +13,11 @@
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Water Ball",
-            "tint": [150, 80, 255],
+            "tint": [
+                150,
+                80,
+                255
+            ],
             "scale": 80,
             "duration": 0.6
         },
@@ -21,7 +25,11 @@
             "speed": 550,
             "size_w": 24,
             "size_h": 14,
-            "color": [150, 80, 255],
+            "color": [
+                150,
+                80,
+                255
+            ],
             "is_aoe": false
         }
     },
@@ -34,12 +42,21 @@
         "base_damage": 6,
         "scaling": 0.5,
         "cooldown": 5.0,
-        "effects": [{"type": "pull", "value": 2}],
+        "effects": [
+            {
+                "type": "pull",
+                "value": 2
+            }
+        ],
         "icon": "UI/ability_icons/Icon20.png",
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Water Spell",
-            "tint": [100, 40, 180],
+            "tint": [
+                100,
+                40,
+                180
+            ],
             "scale": 80,
             "duration": 0.6
         },
@@ -47,7 +64,11 @@
             "speed": 450,
             "size_w": 28,
             "size_h": 16,
-            "color": [100, 40, 180],
+            "color": [
+                100,
+                40,
+                180
+            ],
             "is_aoe": false
         }
     },
@@ -60,7 +81,16 @@
         "base_damage": 10,
         "scaling": 1.0,
         "cooldown": 4.0,
-        "effects": [{"type": "stun", "duration": 2}, {"type": "push", "value": 1}],
+        "effects": [
+            {
+                "type": "stun",
+                "duration": 2
+            },
+            {
+                "type": "push",
+                "value": 1
+            }
+        ],
         "icon": "UI/ability_icons/Icon16.png",
         "animation": {
             "type": "spell",
@@ -73,7 +103,11 @@
             "speed": 650,
             "size_w": 28,
             "size_h": 20,
-            "color": [80, 140, 220],
+            "color": [
+                80,
+                140,
+                220
+            ],
             "is_aoe": false
         }
     },
@@ -91,7 +125,11 @@
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Fire Ball",
-            "tint": [255, 120, 40],
+            "tint": [
+                255,
+                120,
+                40
+            ],
             "scale": 90,
             "duration": 0.5
         },
@@ -99,7 +137,11 @@
             "speed": 600,
             "size_w": 30,
             "size_h": 18,
-            "color": [255, 120, 40],
+            "color": [
+                255,
+                120,
+                40
+            ],
             "is_aoe": false
         }
     },
@@ -125,7 +167,11 @@
             "speed": 500,
             "size_w": 30,
             "size_h": 18,
-            "color": [200, 100, 180],
+            "color": [
+                200,
+                100,
+                180
+            ],
             "is_aoe": true
         }
     },
@@ -138,12 +184,21 @@
         "base_damage": 0,
         "scaling": 0.0,
         "cooldown": 5.0,
-        "effects": [{"type": "block", "value": 15}],
+        "effects": [
+            {
+                "type": "block",
+                "value": 15
+            }
+        ],
         "icon": "UI/ability_icons/Icon12.png",
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Water Spell",
-            "tint": [100, 180, 255],
+            "tint": [
+                100,
+                180,
+                255
+            ],
             "scale": 70,
             "duration": 0.5
         }
@@ -162,7 +217,11 @@
         "animation": {
             "type": "melee_slash",
             "sprite": "UI/weapon_icons/Icon28_09.png",
-            "tint": [100, 255, 80],
+            "tint": [
+                100,
+                255,
+                80
+            ],
             "scale": 64,
             "duration": 0.3
         },
@@ -170,7 +229,11 @@
             "speed": 700,
             "size_w": 22,
             "size_h": 16,
-            "color": [200, 60, 60],
+            "color": [
+                200,
+                60,
+                60
+            ],
             "is_aoe": false
         }
     },
@@ -183,12 +246,21 @@
         "base_damage": 0,
         "scaling": 0.0,
         "cooldown": 6.0,
-        "effects": [{"type": "atb_delay", "value": 0.4}],
+        "effects": [
+            {
+                "type": "atb_delay",
+                "value": 0.4
+            }
+        ],
         "icon": "UI/ability_icons/Icon26.png",
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Fire Spell",
-            "tint": [200, 60, 60],
+            "tint": [
+                200,
+                60,
+                60
+            ],
             "scale": 100,
             "duration": 0.5
         },
@@ -196,7 +268,11 @@
             "speed": 800,
             "size_w": 36,
             "size_h": 24,
-            "color": [200, 60, 60],
+            "color": [
+                200,
+                60,
+                60
+            ],
             "is_aoe": true
         }
     },
@@ -214,7 +290,11 @@
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Water Arrow",
-            "tint": [120, 255, 100],
+            "tint": [
+                120,
+                255,
+                100
+            ],
             "scale": 80,
             "duration": 0.5
         },
@@ -222,7 +302,11 @@
             "speed": 700,
             "size_w": 16,
             "size_h": 8,
-            "color": [80, 180, 80],
+            "color": [
+                80,
+                180,
+                80
+            ],
             "is_aoe": false
         }
     },
@@ -235,12 +319,20 @@
         "base_damage": 10,
         "scaling": 0.9,
         "cooldown": 4.0,
-        "effects": [{"type": "armor_pierce"}],
+        "effects": [
+            {
+                "type": "armor_pierce"
+            }
+        ],
         "icon": "UI/ability_icons/Icons_Fire Arrow.png",
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Fire Arrow",
-            "tint": [180, 220, 80],
+            "tint": [
+                180,
+                220,
+                80
+            ],
             "scale": 80,
             "duration": 0.5
         },
@@ -248,7 +340,11 @@
             "speed": 750,
             "size_w": 20,
             "size_h": 8,
-            "color": [180, 220, 80],
+            "color": [
+                180,
+                220,
+                80
+            ],
             "is_aoe": false
         }
     },
@@ -261,12 +357,21 @@
         "base_damage": 16,
         "scaling": 1.0,
         "cooldown": 7.0,
-        "effects": [{"type": "stun", "duration": 2}],
+        "effects": [
+            {
+                "type": "stun",
+                "duration": 2
+            }
+        ],
         "icon": "UI/ability_icons/Icon28.png",
         "animation": {
             "type": "tween_slam",
             "sprite": "Animations/abilities/Nightfang/AoEStun.png",
-            "tint": [120, 40, 180],
+            "tint": [
+                120,
+                40,
+                180
+            ],
             "scale": 120,
             "duration": 0.8
         },
@@ -274,7 +379,11 @@
             "speed": 550,
             "size_w": 36,
             "size_h": 24,
-            "color": [120, 40, 180],
+            "color": [
+                120,
+                40,
+                180
+            ],
             "is_aoe": false
         }
     },
@@ -287,12 +396,20 @@
         "base_damage": 12,
         "scaling": 0.8,
         "cooldown": 5.0,
-        "effects": [{"type": "life_drain"}],
+        "effects": [
+            {
+                "type": "life_drain"
+            }
+        ],
         "icon": "UI/ability_icons/Icon18.png",
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Water Spell",
-            "tint": [180, 40, 180],
+            "tint": [
+                180,
+                40,
+                180
+            ],
             "scale": 80,
             "duration": 0.6
         },
@@ -300,7 +417,11 @@
             "speed": 450,
             "size_w": 24,
             "size_h": 14,
-            "color": [180, 40, 180],
+            "color": [
+                180,
+                40,
+                180
+            ],
             "is_aoe": false
         }
     },
@@ -313,14 +434,218 @@
         "base_damage": 0,
         "scaling": 0.0,
         "cooldown": 6.0,
-        "effects": [{"type": "summon", "value": 1, "duration": 0, "enemy_id": "cultist_minion"}],
+        "effects": [
+            {
+                "type": "summon",
+                "value": 1,
+                "duration": 0,
+                "enemy_id": "cultist_minion"
+            }
+        ],
         "icon": "UI/ability_icons/Icon18.png",
         "animation": {
             "type": "spell",
             "frames_dir": "Animations/abilities/Fire Spell",
-            "tint": [200, 80, 255],
+            "tint": [
+                200,
+                80,
+                255
+            ],
             "scale": 80,
             "duration": 0.6
+        }
+    },
+    {
+        "id": "void_step",
+        "name": "Void Step",
+        "description": "Swaps position with the ally in front and grants Phase (100% dodge) to both.",
+        "targeting": "single_ally",
+        "range": "support",
+        "base_damage": 0,
+        "scaling": 0.0,
+        "cooldown": 6.0,
+        "effects": [
+            {
+                "type": "swap",
+                "value": 1
+            },
+            {
+                "type": "phase",
+                "duration": 2
+            }
+        ],
+        "icon": "UI/ability_icons/Icon19.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Water Spell",
+            "tint": [
+                120,
+                40,
+                180
+            ],
+            "scale": 80,
+            "duration": 0.5
+        }
+    },
+    {
+        "id": "holy_provocation",
+        "name": "Holy Provocation",
+        "description": "A commanding strike that applies Taunt to self and grants Armor.",
+        "targeting": "single_enemy",
+        "range": "melee",
+        "base_damage": 8,
+        "scaling": 0.5,
+        "cooldown": 5.0,
+        "effects": [
+            {
+                "type": "taunt",
+                "duration": 3
+            },
+            {
+                "type": "block",
+                "value": 10
+            }
+        ],
+        "icon": "UI/ability_icons/Icon16.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Fire Spell",
+            "tint": [
+                255,
+                200,
+                80
+            ],
+            "scale": 80,
+            "duration": 0.5
+        },
+        "projectile": {
+            "speed": 600,
+            "size_w": 20,
+            "size_h": 20,
+            "color": [
+                255,
+                200,
+                80
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "ignite",
+        "name": "Ignite",
+        "description": "Deals moderate fire damage and applies a Burn effect.",
+        "targeting": "single_enemy",
+        "range": "ranged",
+        "base_damage": 10,
+        "scaling": 0.8,
+        "cooldown": 4.0,
+        "effects": [
+            {
+                "type": "burn",
+                "duration": 3,
+                "value": 5
+            }
+        ],
+        "icon": "UI/ability_icons/Icons_Fire Ball.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Fire Ball",
+            "tint": [
+                255,
+                80,
+                40
+            ],
+            "scale": 70,
+            "duration": 0.5
+        },
+        "projectile": {
+            "speed": 550,
+            "size_w": 24,
+            "size_h": 14,
+            "color": [
+                255,
+                80,
+                40
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "bloodlust_charge",
+        "name": "Bloodlust Charge",
+        "description": "High damage strike that moves the caster forward 1 rank.",
+        "targeting": "single_enemy",
+        "range": "melee",
+        "base_damage": 20,
+        "scaling": 1.5,
+        "cooldown": 5.0,
+        "effects": [
+            {
+                "type": "self_move",
+                "value": 1
+            }
+        ],
+        "icon": "UI/weapon_icons/Icon28_09.png",
+        "animation": {
+            "type": "melee_slash",
+            "sprite": "UI/weapon_icons/Icon28_09.png",
+            "tint": [
+                200,
+                40,
+                40
+            ],
+            "scale": 80,
+            "duration": 0.4
+        },
+        "projectile": {
+            "speed": 800,
+            "size_w": 28,
+            "size_h": 16,
+            "color": [
+                200,
+                40,
+                40
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "caltrops",
+        "name": "Caltrops",
+        "description": "Lays a trap on the targeted enemy rank. Deals damage and delays ATB when entered.",
+        "targeting": "single_enemy",
+        "range": "ranged",
+        "base_damage": 0,
+        "scaling": 0.0,
+        "cooldown": 6.0,
+        "effects": [
+            {
+                "type": "trap",
+                "value": 15
+            }
+        ],
+        "icon": "UI/ability_icons/Icon5.png",
+        "animation": {
+            "type": "spell",
+            "frames_dir": "Animations/abilities/Water Arrow",
+            "tint": [
+                100,
+                100,
+                100
+            ],
+            "scale": 60,
+            "duration": 0.4
+        },
+        "projectile": {
+            "speed": 600,
+            "size_w": 16,
+            "size_h": 16,
+            "color": [
+                150,
+                150,
+                150
+            ],
+            "is_aoe": false
         }
     }
 ]

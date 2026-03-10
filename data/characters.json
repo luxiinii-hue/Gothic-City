@@ -1,23 +1,31 @@
 [
     {
-        "id": "acoc1",
+        "id": "pep1",
         "name": "Shadow Wraith",
-        "sprite": "Characters/Dungeon_of_the_Acoc1.png",
+        "sprite": "Characters/Pepruvia_Character1.png",
         "max_hp": 60,
         "strength": 2,
         "armor": 1,
         "speed": 3,
-        "abilities": ["shadow_bolt", "grasping_shadows"],
+        "abilities": [
+            "shadow_bolt",
+            "grasping_shadows",
+            "void_step"
+        ],
         "role": "warlock",
         "unlocked": true,
-        "description": "A spectral entity of shadow and malice. Floats through the dungeon unseen.",
+        "description": "A spectral entity of shadow and malice. Floats through the city unseen.",
         "default_rank": 3,
         "idle_config": {
             "bob_amplitude": 2.0,
             "bob_frequency": 0.5,
             "breathe_min": 0.995,
             "breathe_max": 1.005,
-            "glow_color": [128, 0, 200],
+            "glow_color": [
+                128,
+                0,
+                200
+            ],
             "glow_enabled": true,
             "glow_radius_factor": 0.3,
             "glow_alpha_min": 10,
@@ -25,14 +33,18 @@
         }
     },
     {
-        "id": "acoc2",
+        "id": "pep2",
         "name": "Flame Knight",
-        "sprite": "Characters/Dungeon_of_the_Acoc2.png",
+        "sprite": "Characters/Pepruvia_Character2.png",
         "max_hp": 80,
         "strength": 3,
         "armor": 2,
         "speed": 1,
-        "abilities": ["shield_bash", "cleaving_flame"],
+        "abilities": [
+            "shield_bash",
+            "cleaving_flame",
+            "holy_provocation"
+        ],
         "role": "paladin",
         "unlocked": true,
         "description": "A mighty warrior wreathed in spectral flames. Slow but devastating.",
@@ -42,7 +54,11 @@
             "bob_frequency": 0.6,
             "breathe_min": 0.997,
             "breathe_max": 1.003,
-            "glow_color": [100, 130, 220],
+            "glow_color": [
+                100,
+                130,
+                220
+            ],
             "glow_enabled": true,
             "glow_radius_factor": 0.25,
             "glow_alpha_min": 8,
@@ -50,14 +66,18 @@
         }
     },
     {
-        "id": "acoc3",
+        "id": "pep3",
         "name": "Goblin Mage",
-        "sprite": "Characters/Dungeon_of_the_Acoc3.png",
+        "sprite": "Characters/Pepruvia_Character3.png",
         "max_hp": 65,
         "strength": 2,
         "armor": 0,
         "speed": 2,
-        "abilities": ["arcane_blast", "mana_shield"],
+        "abilities": [
+            "arcane_blast",
+            "mana_shield",
+            "ignite"
+        ],
         "role": "sorcerer",
         "unlocked": true,
         "description": "A cunning goblin wielding arcane magic. The staff's flame never dies.",
@@ -67,7 +87,11 @@
             "bob_frequency": 0.8,
             "breathe_min": 0.996,
             "breathe_max": 1.004,
-            "glow_color": [200, 150, 255],
+            "glow_color": [
+                200,
+                150,
+                255
+            ],
             "glow_enabled": true,
             "glow_radius_factor": 0.2,
             "glow_alpha_min": 10,
@@ -75,14 +99,18 @@
         }
     },
     {
-        "id": "acoc4",
+        "id": "pep4",
         "name": "Nightfang",
-        "sprite": "Characters/Dungeon_of_the_Acoc4.png",
+        "sprite": "Characters/Pepruvia_Character4.png",
         "max_hp": 90,
         "strength": 4,
         "armor": 1,
         "speed": 2,
-        "abilities": ["savage_rend", "frightful_roar"],
+        "abilities": [
+            "savage_rend",
+            "frightful_roar",
+            "bloodlust_charge"
+        ],
         "role": "barbarian",
         "unlocked": true,
         "description": "A bat-winged demon of raw fury. Grows deadlier as its wounds deepen.",
@@ -92,7 +120,11 @@
             "bob_frequency": 0.7,
             "breathe_min": 0.995,
             "breathe_max": 1.005,
-            "glow_color": [80, 200, 80],
+            "glow_color": [
+                80,
+                200,
+                80
+            ],
             "glow_enabled": true,
             "glow_radius_factor": 0.2,
             "glow_alpha_min": 8,
@@ -100,14 +132,18 @@
         }
     },
     {
-        "id": "acoc5",
+        "id": "pep5",
         "name": "Briarfoot",
-        "sprite": "Characters/Dungeon_of_the_Acoc5.png",
+        "sprite": "Characters/Pepruvia_Character5.png",
         "max_hp": 55,
         "strength": 2,
         "armor": 0,
         "speed": 4,
-        "abilities": ["twin_shot", "piercing_arrow"],
+        "abilities": [
+            "twin_shot",
+            "piercing_arrow",
+            "caltrops"
+        ],
         "role": "ranger",
         "unlocked": true,
         "description": "A nimble halfling ranger. Quick feet and quicker arrows.",
@@ -117,7 +153,11 @@
             "bob_frequency": 0.9,
             "breathe_min": 0.997,
             "breathe_max": 1.003,
-            "glow_color": [120, 180, 80],
+            "glow_color": [
+                120,
+                180,
+                80
+            ],
             "glow_enabled": false,
             "glow_radius_factor": 0.15,
             "glow_alpha_min": 5,
