@@ -31,11 +31,14 @@ class AIController:
         """Try to fire an ability if off cooldown (random chance per frame)."""
         if unit.is_stunned:
             return
-        # Small chance per frame to check abilities (~1.2 checks/sec at 60fps)
-        if random.random() > 0.02:
+        # Small chance per frame to check abilities (~3 checks/sec at 60fps)
+        if random.random() > 0.05:
             return
 
-        for ability_id in unit.ability_ids:
+        # Shuffle ability order so AI doesn't always prefer the first ability
+        ability_ids = list(unit.ability_ids)
+        random.shuffle(ability_ids)
+        for ability_id in ability_ids:
             if unit.can_use_ability(ability_id):
                 self.battle.fire_ability(unit, ability_id)
                 break

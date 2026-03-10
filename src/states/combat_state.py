@@ -150,6 +150,7 @@ class CombatScreenState(BaseState):
         # End state
         self.end_delay = 0.0
         self.transitioning = False
+        self.paused = False
 
         # Tracking for position tweening
         self.previous_positions: dict[str, tuple[float, float]] = {}
@@ -157,6 +158,8 @@ class CombatScreenState(BaseState):
             self.previous_positions[unit.name] = (unit.x, unit.y)
 
     def update(self, dt: float):
+        if self.paused:
+            return
         # Update idle animators
         for animator in self.player_animators.values():
             animator.update(dt)
@@ -378,6 +381,9 @@ class CombatScreenState(BaseState):
         self._draw_ability_hud(surface)
         self._draw_action_log(surface)
 
+        # Ability tooltip (drawn on top of HUD)
+        self.ability_hud.draw_tooltip(surface)
+
         # Result overlay
         if self.battle.result:
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
@@ -389,6 +395,10 @@ class CombatScreenState(BaseState):
                 text, color = "DEFEAT...", RED
             draw_text(surface, text, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2,
                       size=FONT_SIZE_LARGE, color=color, center=True, font_type="title")
+
+        # Pause / escape overlay
+        if self.paused:
+            self._draw_pause_overlay(surface)
 
     def _draw_team(self, surface: pygame.Surface,
                    units: list[CombatUnit],
@@ -497,11 +507,61 @@ class CombatScreenState(BaseState):
             draw_text(surface, msg, log_x, log_y + i * 16,
                       size=12, color=color, center=False)
 
+    def _draw_pause_overlay(self, surface: pygame.Surface):
+        dark = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        dark.fill((0, 0, 0, 160))
+        surface.blit(dark, (0, 0))
+
+        cx, cy = SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
+        panel = pygame.Rect(cx - 180, cy - 100, 360, 200)
+        pygame.draw.rect(surface, PANEL_BG, panel, border_radius=10)
+        pygame.draw.rect(surface, PANEL_BORDER, panel, width=2, border_radius=10)
+
+        draw_text(surface, "Return to Menu?", cx, cy - 60,
+                  size=FONT_SIZE_LARGE, color=GOLD, center=True, font_type="title")
+        draw_text(surface, "Current run progress will be lost.", cx, cy - 20,
+                  size=FONT_SIZE_SMALL, color=GRAY, center=True)
+
+        # Yes button
+        self._pause_yes_rect = pygame.Rect(cx - 150, cy + 20, 130, 40)
+        color_yes = (70, 50, 50)
+        if self._pause_yes_rect.collidepoint(pygame.mouse.get_pos()):
+            color_yes = (100, 60, 60)
+        pygame.draw.rect(surface, color_yes, self._pause_yes_rect, border_radius=6)
+        pygame.draw.rect(surface, PANEL_BORDER, self._pause_yes_rect, width=1, border_radius=6)
+        draw_text(surface, "Yes, Leave", cx - 85, cy + 40,
+                  size=FONT_SIZE_SMALL, color=RED, center=True)
+
+        # No button
+        self._pause_no_rect = pygame.Rect(cx + 20, cy + 20, 130, 40)
+        color_no = (50, 60, 50)
+        if self._pause_no_rect.collidepoint(pygame.mouse.get_pos()):
+            color_no = (60, 80, 60)
+        pygame.draw.rect(surface, color_no, self._pause_no_rect, border_radius=6)
+        pygame.draw.rect(surface, PANEL_BORDER, self._pause_no_rect, width=1, border_radius=6)
+        draw_text(surface, "Resume", cx + 85, cy + 40,
+                  size=FONT_SIZE_SMALL, color=GREEN, center=True)
+
     def handle_event(self, event: pygame.event.Event):
         if self.transitioning:
             return
 
+        # Pause menu handling
+        if self.paused:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.paused = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mx, my = event.pos
+                if hasattr(self, '_pause_yes_rect') and self._pause_yes_rect.collidepoint(mx, my):
+                    self.game.state_machine.transition(GameState.TITLE)
+                elif hasattr(self, '_pause_no_rect') and self._pause_no_rect.collidepoint(mx, my):
+                    self.paused = False
+            return
+
         if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.paused = True
+                return
             # Ability hotkeys 1-4
             if event.key in (pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4):
                 idx = event.key - pygame.K_1
@@ -512,6 +572,10 @@ class CombatScreenState(BaseState):
             clicked_ability_id = self.ability_hud.handle_click(mx, my)
             if clicked_ability_id and self.player_controlled:
                 self.battle.fire_ability(self.player_controlled, clicked_ability_id)
+
+        elif event.type == pygame.MOUSEMOTION:
+            mx, my = event.pos
+            self.ability_hud.update_hover(mx, my, self.ability_registry)
 
     def _fire_ability_by_index(self, idx: int):
         if not self.player_controlled:

@@ -59,6 +59,7 @@ class MapState(BaseState):
         self.overlay_data = None
         self.event_result_message = None
         self.event_result_timer = 0.0
+        self.show_menu_confirm = False
 
     def update(self, dt: float):
         self.time += dt
@@ -108,6 +109,9 @@ class MapState(BaseState):
         # Overlay
         if self.overlay:
             self._draw_overlay(surface)
+
+        if self.show_menu_confirm:
+            self._draw_menu_confirm(surface)
 
     def _draw_node(self, surface: pygame.Surface, node: MapNode):
         color = NODE_COLORS.get(node.node_type, GRAY)
@@ -389,7 +393,10 @@ class MapState(BaseState):
     def _open_event(self):
         am = self.game.asset_manager
         events = am.load_json("events.json")
-        event = random.choice(events)
+        team_ids = {c.id for c in self.run.team}
+        eligible = [e for e in events
+                    if "requires_char" not in e or e["requires_char"] in team_ids]
+        event = random.choice(eligible) if eligible else random.choice(events)
         self.overlay = "event"
         self.overlay_data = {"event": event}
 
@@ -450,6 +457,14 @@ class MapState(BaseState):
                 hp_cost = outcome.get("hp_cost", 0)
                 self.run.team_hp[target.id] = max(1, self.run.team_hp[target.id] - hp_cost)
                 self.run.apply_stat_boost(target.id, outcome["stat"], outcome["value"])
+        elif otype == "ability_unlock":
+            char_id = outcome.get("char_id", "")
+            ability_id = outcome.get("ability_id", "")
+            hp_cost = outcome.get("hp_cost", 0)
+            if char_id and ability_id:
+                self.run.unlock_ability(char_id, ability_id)
+                if hp_cost and char_id in self.run.team_hp:
+                    self.run.team_hp[char_id] = max(1, self.run.team_hp[char_id] - hp_cost)
 
         self.event_result_message = outcome.get("message", "Something happened.")
         self.event_result_timer = 2.0
@@ -482,16 +497,68 @@ class MapState(BaseState):
             if alive:
                 target = random.choice(alive)
                 self.run.apply_ability_mod(target.id, reward["effect"])
+        elif rtype == "ability_unlock":
+            char_id = reward.get("char_id", "")
+            ability_id = reward.get("ability_id", "")
+            if char_id and ability_id:
+                self.run.unlock_ability(char_id, ability_id)
         elif rtype == "relic":
             self.run.apply_relic(reward)
 
+    def _draw_menu_confirm(self, surface):
+        dark = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+        dark.fill((0, 0, 0, 160))
+        surface.blit(dark, (0, 0))
+
+        cx, cy = SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
+        panel = pygame.Rect(cx - 180, cy - 100, 360, 200)
+        pygame.draw.rect(surface, PANEL_BG, panel, border_radius=10)
+        pygame.draw.rect(surface, PANEL_BORDER, panel, width=2, border_radius=10)
+
+        draw_text(surface, "Return to Menu?", cx, cy - 60,
+                  size=FONT_SIZE_LARGE, color=GOLD, center=True, font_type="title")
+        draw_text(surface, "Current run progress will be lost.", cx, cy - 20,
+                  size=FONT_SIZE_SMALL, color=GRAY, center=True)
+
+        self._menu_yes_rect = pygame.Rect(cx - 150, cy + 20, 130, 40)
+        color_yes = (70, 50, 50)
+        if self._menu_yes_rect.collidepoint(pygame.mouse.get_pos()):
+            color_yes = (100, 60, 60)
+        pygame.draw.rect(surface, color_yes, self._menu_yes_rect, border_radius=6)
+        pygame.draw.rect(surface, PANEL_BORDER, self._menu_yes_rect, width=1, border_radius=6)
+        draw_text(surface, "Yes, Leave", cx - 85, cy + 40,
+                  size=FONT_SIZE_SMALL, color=RED, center=True)
+
+        self._menu_no_rect = pygame.Rect(cx + 20, cy + 20, 130, 40)
+        color_no = (50, 60, 50)
+        if self._menu_no_rect.collidepoint(pygame.mouse.get_pos()):
+            color_no = (60, 80, 60)
+        pygame.draw.rect(surface, color_no, self._menu_no_rect, border_radius=6)
+        pygame.draw.rect(surface, PANEL_BORDER, self._menu_no_rect, width=1, border_radius=6)
+        draw_text(surface, "Resume", cx + 85, cy + 40,
+                  size=FONT_SIZE_SMALL, color=GREEN, center=True)
+
     def handle_event(self, event: pygame.event.Event):
+        # Menu confirm handling
+        if self.show_menu_confirm:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                self.show_menu_confirm = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mx, my = event.pos
+                if hasattr(self, '_menu_yes_rect') and self._menu_yes_rect.collidepoint(mx, my):
+                    self.game.state_machine.transition(GameState.TITLE)
+                elif hasattr(self, '_menu_no_rect') and self._menu_no_rect.collidepoint(mx, my):
+                    self.show_menu_confirm = False
+            return
+
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             if self.overlay:
                 self.overlay = None
                 self.overlay_data = None
                 self.event_result_message = None
                 return
+            self.show_menu_confirm = True
+            return
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             pos = event.pos

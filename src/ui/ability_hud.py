@@ -2,10 +2,11 @@
 
 import pygame
 from src.combat.unit import CombatUnit
-from src.combat.ability import AbilityRegistry
+from src.combat.ability import AbilityRegistry, AbilityDef
 from src.ui.text_renderer import draw_text
+from src.ui.tooltip import Tooltip
 from src.core.asset_manager import AssetManager
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, GRAY, GOLD, DARK_GRAY
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, WHITE, GRAY, GOLD, DARK_GRAY, ORANGE, CYAN
 
 class AbilityHUD:
     def __init__(self, asset_manager: AssetManager):
@@ -14,6 +15,7 @@ class AbilityHUD:
         self.hud_y = SCREEN_HEIGHT - 80
         self.icon_size = 60
         self.spacing = 70
+        self.tooltip = Tooltip()
 
     def draw(self, surface: pygame.Surface, unit: CombatUnit, registry: AbilityRegistry):
         self.rects = []
@@ -77,6 +79,52 @@ class AbilityHUD:
                 # Cooldown text
                 draw_text(surface, f"{cd_remaining:.1f}", btn_x + self.icon_size // 2, self.hud_y + self.icon_size // 2,
                           size=18, color=WHITE, center=True)
+
+    def update_hover(self, mx: int, my: int, registry: AbilityRegistry):
+        """Update tooltip based on mouse hover over ability icons."""
+        for btn_rect, ability_id in self.rects:
+            if btn_rect.collidepoint(mx, my):
+                ability = registry.get(ability_id)
+                if ability:
+                    self._show_ability_tooltip(mx, my, ability)
+                    return
+        self.tooltip.hide()
+
+    def _show_ability_tooltip(self, mx: int, my: int, ability: AbilityDef):
+        """Build and show tooltip for an ability."""
+        lines: list[tuple[str, tuple]] = []
+        if ability.description:
+            lines.append((ability.description, GRAY))
+        if ability.base_damage > 0:
+            lines.append((f"Damage: {ability.base_damage} (+{ability.scaling}x STR)", WHITE))
+        lines.append((f"Cooldown: {ability.cooldown}s", WHITE))
+        lines.append((f"Target: {ability.targeting.replace('_', ' ')}", WHITE))
+        lines.append((f"Range: {ability.range}", WHITE))
+        for effect in ability.effects:
+            if effect.type == "stun":
+                lines.append((f"Stun for {effect.duration}s", ORANGE))
+            elif effect.type == "burn":
+                lines.append((f"Burn: {effect.value} dmg for {effect.duration}s", ORANGE))
+            elif effect.type == "atb_delay":
+                lines.append((f"Delay enemy ATB by {int(effect.value * 100)}%", CYAN))
+            elif effect.type == "life_drain":
+                lines.append((f"Drain {int(effect.value * 100)}% as HP", CYAN))
+            elif effect.type == "summon":
+                lines.append((f"Summon: {effect.enemy_id}", ORANGE))
+            else:
+                lines.append((f"Effect: {effect.type}", ORANGE))
+
+        icon = None
+        if ability.icon:
+            try:
+                icon = self.asset_manager.load_image(ability.icon)
+            except Exception:
+                pass
+        self.tooltip.show(mx, my, ability.name, lines, icon)
+
+    def draw_tooltip(self, surface: pygame.Surface):
+        """Draw the tooltip overlay (call after all other HUD drawing)."""
+        self.tooltip.draw(surface)
 
     def handle_click(self, mx: int, my: int) -> str | None:
         """Returns ability_id if clicked, else None."""

@@ -312,7 +312,7 @@
         "range": "ranged",
         "base_damage": 0,
         "scaling": 0.0,
-        "cooldown": 9.0,
+        "cooldown": 6.0,
         "effects": [{"type": "summon", "value": 1, "duration": 0, "enemy_id": "cultist_minion"}],
         "icon": "UI/ability_icons/Icon18.png",
         "animation": {

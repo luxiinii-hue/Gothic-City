@@ -105,15 +105,5 @@
         "value": 1,
         "description": "All allies gain +1 speed (faster ATB fill)",
         "cost": 85
-    },
-    {
-        "id": "abyssal_smash_unlock",
-        "name": "Abyssal Smash",
-        "type": "ability_unlock",
-        "rarity": "rare",
-        "char_id": "acoc4",
-        "ability_id": "abyssal_smash",
-        "description": "Nightfang learns Abyssal Smash — a devastating AoE stun attack",
-        "cost": 0
     }
 ]
