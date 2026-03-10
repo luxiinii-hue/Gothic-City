@@ -59,7 +59,7 @@ class Projectile:
         dy = self.target_y - self.y
         dist = (dx * dx + dy * dy) ** 0.5
 
-        if dist < self.speed * dt:
+        if dist <= self.speed * dt or dist == 0:
             # Arrived at target
             self.x = self.target_x
             self.y = self.target_y

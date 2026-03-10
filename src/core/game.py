@@ -16,6 +16,10 @@ from src.states.result_state import ResultState
 class Game:
     def __init__(self):
         pygame.init()
+        try:
+            pygame.mixer.init()
+        except pygame.error:
+            print("Warning: Audio device could not be initialized.")
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
@@ -45,9 +49,13 @@ class Game:
                 if event.type == pygame.QUIT:
                     self.running = False
                 else:
-                    self.state_machine.current.handle_event(event)
-            self.state_machine.current.update(dt)
+                    consumed = self.settings.handle_event(event)
+                    if not consumed:
+                        self.state_machine.current.handle_event(event)
+            if not self.settings.active:
+                self.state_machine.current.update(dt)
             self.state_machine.current.draw(self.screen)
+            self.settings.draw(self.screen)
             pygame.display.flip()
             await asyncio.sleep(0)
 

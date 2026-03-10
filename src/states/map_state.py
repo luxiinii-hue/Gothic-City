@@ -52,6 +52,15 @@ class MapState(BaseState):
         if "team" in kwargs:
             map_nodes = generate_map()
             self.game.run_manager = RunManager(kwargs["team"], map_nodes)
+            
+            # Start background music
+            try:
+                if pygame.mixer.get_init():
+                    pygame.mixer.music.load("audio/music/Break Their Will.mp3")
+                    pygame.mixer.music.set_volume(0.3)  # Not too loud
+                    pygame.mixer.music.play(-1)  # Loop infinitely
+            except Exception as e:
+                print(f"Could not load music: {e}")
 
         self.run = self.game.run_manager
 
