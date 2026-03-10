@@ -11,6 +11,7 @@ from src.map.run_manager import RunManager
 from src.ui.button import Button
 from src.ui.text_renderer import draw_text
 from src.ui.health_bar import draw_health_bar
+from src.ui.tooltip import Tooltip
 from src.animation.tween import pulse
 from config import (
     SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, GRAY, GOLD, RED, GREEN, BLUE,
@@ -60,6 +61,7 @@ class MapState(BaseState):
         self.event_result_message = None
         self.event_result_timer = 0.0
         self.show_menu_confirm = False
+        self.tooltip = Tooltip()
 
     def update(self, dt: float):
         self.time += dt
@@ -310,15 +312,18 @@ class MapState(BaseState):
         draw_text(surface, f"Gold: {self.run.gold}", cx + 100, cy - 130,
                   size=FONT_SIZE_MEDIUM, color=GOLD, center=True)
 
+        tooltip_shown = False
         if self.overlay_data and "items" in self.overlay_data:
+            mouse_pos = pygame.mouse.get_pos()
             y = cy - 80
             for i, item in enumerate(self.overlay_data["items"]):
                 if item.get("bought"):
                     continue
                 btn_rect = pygame.Rect(cx - 50, y, 300, 50)
                 can_afford = self.run.gold >= item.get("cost", 0)
+                is_hovered = btn_rect.collidepoint(mouse_pos)
                 color = (50, 65, 50) if can_afford else (50, 40, 40)
-                if btn_rect.collidepoint(pygame.mouse.get_pos()) and can_afford:
+                if is_hovered and can_afford:
                     color = (70, 90, 70)
                 pygame.draw.rect(surface, color, btn_rect, border_radius=6)
                 pygame.draw.rect(surface, PANEL_BORDER, btn_rect, width=1, border_radius=6)
@@ -329,11 +334,42 @@ class MapState(BaseState):
                           size=FONT_SIZE_SMALL, color=text_color)
                 draw_text(surface, item.get("description", ""), cx - 40, y + 28,
                           size=FONT_SIZE_SMALL, color=GRAY)
+
+                if is_hovered:
+                    self._show_item_tooltip(mouse_pos[0], mouse_pos[1], item)
+                    tooltip_shown = True
                 y += 60
+
+        if not tooltip_shown:
+            self.tooltip.hide()
 
         # Close button
         draw_text(surface, "Press ESC to leave", cx, cy + 170,
                   size=FONT_SIZE_SMALL, color=GRAY, center=True)
+
+        self.tooltip.draw(surface)
+
+    def _show_item_tooltip(self, mx: int, my: int, item: dict):
+        lines: list[tuple[str, tuple]] = []
+        rtype = item.get("type", "")
+        desc = item.get("description", "")
+        if desc:
+            lines.append((desc, GRAY))
+        if rtype == "stat_boost":
+            lines.append((f"+{item.get('value', 0)} {item.get('stat', '').replace('_', ' ').title()}", GREEN))
+        elif rtype == "ability_mod":
+            lines.append((f"Effect: {item.get('effect', '')}", ORANGE))
+        elif rtype == "relic":
+            lines.append(("Applies to entire team", CYAN))
+        cost = item.get("cost", 0)
+        if cost > 0:
+            can_afford = self.run.gold >= cost
+            cost_color = GOLD if can_afford else RED
+            lines.append((f"Cost: {cost}g", cost_color))
+        rarity = item.get("rarity", "common")
+        rarity_colors = {"common": WHITE, "uncommon": GREEN, "rare": GOLD}
+        lines.append((f"Rarity: {rarity.capitalize()}", rarity_colors.get(rarity, WHITE)))
+        self.tooltip.show(mx, my, item.get("name", ""), lines)
 
     def _draw_treasure_overlay(self, surface, cx, cy):
         panel = pygame.Rect(cx - 200, cy - 100, 400, 200)

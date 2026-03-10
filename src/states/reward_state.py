@@ -5,9 +5,10 @@ import pygame
 from src.states.base_state import BaseState
 from src.core.state_machine import GameState
 from src.ui.text_renderer import draw_text
+from src.ui.tooltip import Tooltip
 from config import (
     SCREEN_WIDTH, SCREEN_HEIGHT, BLACK, WHITE, GRAY, GOLD, GREEN, BLUE,
-    PANEL_BG, PANEL_BORDER, PURPLE, ORANGE,
+    PANEL_BG, PANEL_BORDER, PURPLE, ORANGE, CYAN,
     FONT_SIZE_SMALL, FONT_SIZE_MEDIUM, FONT_SIZE_LARGE, FONT_SIZE_TITLE,
 )
 
@@ -45,6 +46,7 @@ class RewardState(BaseState):
 
         self.selected = None
         self.hovered = -1
+        self.tooltip = Tooltip()
 
         # Sub-selection for stat boosts (pick which character)
         self.awaiting_char_select = False
@@ -111,10 +113,14 @@ class RewardState(BaseState):
         mouse_pos = pygame.mouse.get_pos()
         self.hovered = -1
 
+        tooltip_shown = False
         for i, (reward, rect) in enumerate(zip(self.rewards, self.card_rects)):
             is_hovered = rect.collidepoint(mouse_pos)
             if is_hovered:
                 self.hovered = i
+                if not self.awaiting_char_select:
+                    self._show_reward_tooltip(mouse_pos[0], mouse_pos[1], reward)
+                    tooltip_shown = True
 
             rarity = reward.get("rarity", "common")
             rarity_color = RARITY_COLORS.get(rarity, WHITE)
@@ -145,9 +151,36 @@ class RewardState(BaseState):
             self._draw_wrapped(surface, desc, rect.x + 15, rect.y + 110,
                                rect.width - 30, FONT_SIZE_SMALL, GRAY)
 
+        if not tooltip_shown:
+            self.tooltip.hide()
+
         # Character selection sub-prompt
         if self.awaiting_char_select:
             self._draw_char_select(surface)
+
+        self.tooltip.draw(surface)
+
+    def _show_reward_tooltip(self, mx: int, my: int, reward: dict):
+        lines: list[tuple[str, tuple]] = []
+        rtype = reward.get("type", "")
+        desc = reward.get("description", "")
+        if desc:
+            lines.append((desc, GRAY))
+        if rtype == "stat_boost":
+            lines.append((f"+{reward.get('value', 0)} {reward.get('stat', '').replace('_', ' ').title()}", GREEN))
+            lines.append(("Applied to one character", WHITE))
+        elif rtype == "ability_mod":
+            lines.append((f"Effect: {reward.get('effect', '')}", ORANGE))
+            lines.append(("Applied to one character", WHITE))
+        elif rtype == "relic":
+            lines.append(("Applies to entire team", CYAN))
+        elif rtype == "ability_unlock":
+            char_id = reward.get("char_id", "")
+            lines.append((f"Unlocks for: {char_id}", GOLD))
+        rarity = reward.get("rarity", "common")
+        rarity_color = RARITY_COLORS.get(rarity, WHITE)
+        lines.append((f"Rarity: {rarity.capitalize()}", rarity_color))
+        self.tooltip.show(mx, my, reward.get("name", ""), lines)
 
     def _draw_wrapped(self, surface, text, x, y, max_width, size, color):
         words = text.split()

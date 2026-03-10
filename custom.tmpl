@@ -120,8 +120,8 @@ asyncio.run( custom_site() )
 config = {
     xtermjs : "{{cookiecutter.xtermjs}}" ,
     _sdl2 : "canvas",
-    user_canvas : 0,
-    user_canvas_managed : 0,
+    user_canvas : 1,
+    user_canvas_managed : 1,
     gui_divider : 1,
     ume_block : 1,
     can_close : {{cookiecutter.can_close}},
@@ -339,8 +339,8 @@ function show_infobox() {
     </div>
 
     <canvas class="emscripten" id="canvas"
-width="1px"
-height="1px"
+width="{{cookiecutter.width}}px"
+height="{{cookiecutter.height}}px"
     oncontextmenu="event.preventDefault()" tabindex=1>
     </canvas>
 
