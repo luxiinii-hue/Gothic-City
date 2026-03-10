@@ -27,6 +27,23 @@ class AIController:
                 continue
             self._try_use_ability(unit)
 
+    def _should_use_ability(self, unit: CombatUnit, ability_id: str) -> bool:
+        """Specific conditional checks for certain abilities."""
+        if ability_id == "dark_sacrifice":
+            # Cultist Minion only sacrifices if HP is below 50%
+            return unit.hp < (unit.max_hp * 0.5)
+            
+        if ability_id == "defensive_stance":
+            # Goblin Sentinel only uses stance if in front ranks
+            return unit.rank <= 2
+            
+        if ability_id == "eldritch_command":
+            # Goblin Warlock only commands if there is a Cultist Minion alive
+            has_minion = any(u.alive and u.id == "cultist_minion" for u in self.battle.enemy_units)
+            return has_minion
+
+        return True
+
     def _try_use_ability(self, unit: CombatUnit):
         """Try to fire an ability if off cooldown (random chance per frame)."""
         if unit.is_stunned:
@@ -40,5 +57,6 @@ class AIController:
         random.shuffle(ability_ids)
         for ability_id in ability_ids:
             if unit.can_use_ability(ability_id):
-                self.battle.fire_ability(unit, ability_id)
-                break
+                if self._should_use_ability(unit, ability_id):
+                    self.battle.fire_ability(unit, ability_id)
+                    break

@@ -11,6 +11,13 @@ def get_front_enemy(enemies: list[CombatUnit]) -> CombatUnit | None:
         return None
     return min(alive, key=lambda u: u.rank)
 
+def get_back_enemy(enemies: list[CombatUnit]) -> CombatUnit | None:
+    """Return the alive enemy at the highest rank (back-most)."""
+    alive = [u for u in enemies if u.alive]
+    if not alive:
+        return None
+    return max(alive, key=lambda u: u.rank)
+
 
 def get_lowest_hp_enemy(enemies: list[CombatUnit]) -> CombatUnit | None:
     """Return the alive enemy with the lowest HP."""
@@ -74,6 +81,10 @@ def get_targets(targeting: str, source: CombatUnit,
         # Hits enemies at ranks 1 and 2 (Cleaving Flame, Piercing Arrow)
         front = get_front_rank_enemies(enemies, max_rank=2)
         return sorted(front, key=lambda u: u.rank) if front else []
+
+    elif targeting == "backline_enemy":
+        target = get_back_enemy(enemies)
+        return [target] if target else []
 
     elif targeting == "all_enemies":
         return alive_enemies

@@ -10,7 +10,11 @@
         "abilities": [],
         "tier": "normal",
         "gold_reward": 8,
-        "color": [80, 180, 80],
+        "color": [
+            80,
+            180,
+            80
+        ],
         "idle_config": {
             "bob_amplitude": 3.0,
             "bob_frequency": 1.5,
@@ -27,10 +31,16 @@
         "strength": 4,
         "armor": 1,
         "speed": 1,
-        "abilities": [],
+        "abilities": [
+            "club_smash"
+        ],
         "tier": "normal",
         "gold_reward": 10,
-        "color": [100, 160, 60],
+        "color": [
+            100,
+            160,
+            60
+        ],
         "idle_config": {
             "bob_amplitude": 0.8,
             "bob_frequency": 0.6,
@@ -47,10 +57,16 @@
         "strength": 2,
         "armor": 3,
         "speed": 2,
-        "abilities": [],
+        "abilities": [
+            "defensive_stance"
+        ],
         "tier": "normal",
         "gold_reward": 12,
-        "color": [120, 140, 80],
+        "color": [
+            120,
+            140,
+            80
+        ],
         "idle_config": {
             "bob_amplitude": 0.6,
             "bob_frequency": 0.5,
@@ -67,10 +83,17 @@
         "strength": 5,
         "armor": 0,
         "speed": 5,
-        "abilities": [],
+        "abilities": [
+            "poison_dart",
+            "backstab"
+        ],
         "tier": "elite",
         "gold_reward": 25,
-        "color": [60, 80, 60],
+        "color": [
+            60,
+            80,
+            60
+        ],
         "idle_config": {
             "bob_amplitude": 1.0,
             "bob_frequency": 0.8,
@@ -87,17 +110,24 @@
         "strength": 4,
         "armor": 1,
         "speed": 3,
-        "abilities": [],
+        "abilities": [
+            "noxious_spit"
+        ],
         "tier": "elite",
         "gold_reward": 25,
-        "color": [60, 140, 60],
+        "color": [
+            60,
+            140,
+            60
+        ],
         "idle_config": {
             "bob_amplitude": 3.0,
             "bob_frequency": 1.5,
             "breathe_min": 0.994,
             "breathe_max": 1.006,
             "glow_enabled": false
-        }
+        },
+        "on_death_ability": "death_burst"
     },
     {
         "id": "goblin_warlock",
@@ -107,16 +137,28 @@
         "strength": 5,
         "armor": 3,
         "speed": 2,
-        "abilities": ["summon_cultist", "life_drain"],
+        "abilities": [
+            "summon_cultist",
+            "life_drain",
+            "eldritch_command"
+        ],
         "tier": "boss",
         "gold_reward": 50,
-        "color": [140, 60, 180],
+        "color": [
+            140,
+            60,
+            180
+        ],
         "idle_config": {
             "bob_amplitude": 1.2,
             "bob_frequency": 0.6,
             "breathe_min": 0.995,
             "breathe_max": 1.005,
-            "glow_color": [160, 80, 200],
+            "glow_color": [
+                160,
+                80,
+                200
+            ],
             "glow_enabled": true,
             "glow_radius_factor": 0.3,
             "glow_alpha_min": 10,
@@ -131,15 +173,21 @@
         "strength": 2,
         "armor": 0,
         "speed": 4,
-        "abilities": [],
+        "abilities": [
+            "dark_sacrifice"
+        ],
         "tier": "minion",
         "gold_reward": 2,
-        "color": [100, 40, 40],
+        "color": [
+            100,
+            40,
+            40
+        ],
         "idle_config": {
             "bob_amplitude": 2.0,
             "bob_frequency": 1.5,
-            "breathe_min": 0.990,
-            "breathe_max": 1.010,
+            "breathe_min": 0.99,
+            "breathe_max": 1.01,
             "glow_enabled": false
         }
     }

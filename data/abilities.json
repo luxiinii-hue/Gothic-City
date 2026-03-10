@@ -647,5 +647,286 @@
             ],
             "is_aoe": false
         }
+    },
+    {
+        "id": "club_smash",
+        "name": "Club Smash",
+        "description": "A heavy blow that knocks the target back.",
+        "targeting": "single_enemy",
+        "range": "melee",
+        "base_damage": 12,
+        "scaling": 1.0,
+        "cooldown": 4.0,
+        "effects": [
+            {
+                "type": "push",
+                "value": 1
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "melee_slash",
+            "tint": [
+                160,
+                100,
+                60
+            ],
+            "scale": 80,
+            "duration": 0.4
+        },
+        "projectile": {
+            "speed": 600,
+            "size_w": 20,
+            "size_h": 20,
+            "color": [
+                160,
+                100,
+                60
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "defensive_stance",
+        "name": "Defensive Stance",
+        "description": "Raises guard, taunting enemies and gaining armor.",
+        "targeting": "self",
+        "range": "support",
+        "base_damage": 0,
+        "scaling": 0.0,
+        "cooldown": 6.0,
+        "effects": [
+            {
+                "type": "taunt",
+                "duration": 4
+            },
+            {
+                "type": "block",
+                "value": 20
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "spell",
+            "tint": [
+                100,
+                100,
+                100
+            ],
+            "scale": 60,
+            "duration": 0.3
+        }
+    },
+    {
+        "id": "poison_dart",
+        "name": "Poison Dart",
+        "description": "Fires a toxic dart at a target.",
+        "targeting": "single_enemy",
+        "range": "ranged",
+        "base_damage": 5,
+        "scaling": 0.5,
+        "cooldown": 3.0,
+        "effects": [
+            {
+                "type": "poison",
+                "duration": 4,
+                "value": 4
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "spell",
+            "tint": [
+                80,
+                200,
+                80
+            ],
+            "scale": 50,
+            "duration": 0.3
+        },
+        "projectile": {
+            "speed": 800,
+            "size_w": 12,
+            "size_h": 4,
+            "color": [
+                80,
+                200,
+                80
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "backstab",
+        "name": "Backstab",
+        "description": "Strikes the most distant enemy.",
+        "targeting": "backline_enemy",
+        "range": "ranged",
+        "base_damage": 18,
+        "scaling": 1.5,
+        "cooldown": 5.0,
+        "effects": [],
+        "icon": "",
+        "animation": {
+            "type": "melee_slash",
+            "tint": [
+                60,
+                60,
+                60
+            ],
+            "scale": 80,
+            "duration": 0.4
+        },
+        "projectile": {
+            "speed": 1000,
+            "size_w": 10,
+            "size_h": 10,
+            "color": [
+                0,
+                0,
+                0
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "noxious_spit",
+        "name": "Noxious Spit",
+        "description": "Spits acid on the front lines.",
+        "targeting": "front_two",
+        "range": "ranged",
+        "base_damage": 8,
+        "scaling": 0.6,
+        "cooldown": 5.0,
+        "effects": [
+            {
+                "type": "poison",
+                "duration": 3,
+                "value": 5
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "spell",
+            "tint": [
+                120,
+                220,
+                40
+            ],
+            "scale": 70,
+            "duration": 0.4
+        },
+        "projectile": {
+            "speed": 450,
+            "size_w": 24,
+            "size_h": 24,
+            "color": [
+                120,
+                220,
+                40
+            ],
+            "is_aoe": false
+        }
+    },
+    {
+        "id": "death_burst",
+        "name": "Death Burst",
+        "description": "Explodes on death, dealing damage to all enemies.",
+        "targeting": "all_enemies",
+        "range": "ranged",
+        "base_damage": 15,
+        "scaling": 0.5,
+        "cooldown": 0.0,
+        "effects": [
+            {
+                "type": "poison",
+                "duration": 2,
+                "value": 5
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "spell",
+            "tint": [
+                100,
+                200,
+                50
+            ],
+            "scale": 120,
+            "duration": 0.6
+        },
+        "projectile": {
+            "speed": 600,
+            "size_w": 30,
+            "size_h": 30,
+            "color": [
+                100,
+                200,
+                50
+            ],
+            "is_aoe": true
+        }
+    },
+    {
+        "id": "eldritch_command",
+        "name": "Eldritch Command",
+        "description": "Commands an ally to attack immediately.",
+        "targeting": "single_ally",
+        "range": "support",
+        "base_damage": 0,
+        "scaling": 0.0,
+        "cooldown": 8.0,
+        "effects": [
+            {
+                "type": "atb_fill",
+                "value": 1
+            },
+            {
+                "type": "haste",
+                "duration": 3
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "spell",
+            "tint": [
+                180,
+                40,
+                200
+            ],
+            "scale": 60,
+            "duration": 0.5
+        }
+    },
+    {
+        "id": "dark_sacrifice",
+        "name": "Dark Sacrifice",
+        "description": "Sacrifices self to heal allies and grant haste.",
+        "targeting": "all_allies",
+        "range": "support",
+        "base_damage": 0,
+        "scaling": 0.0,
+        "cooldown": 10.0,
+        "effects": [
+            {
+                "type": "heal",
+                "value": 30
+            },
+            {
+                "type": "haste",
+                "duration": 4
+            }
+        ],
+        "icon": "",
+        "animation": {
+            "type": "spell",
+            "tint": [
+                200,
+                40,
+                40
+            ],
+            "scale": 100,
+            "duration": 0.5
+        }
     }
 ]

@@ -18,6 +18,7 @@ class EnemyData:
     gold_reward: int
     color: tuple = (200, 50, 50)
     idle_config: IdleConfig = field(default_factory=IdleConfig)
+    on_death_ability: str = ""
 
     @classmethod
     def from_dict(cls, data: dict) -> "EnemyData":
@@ -36,4 +37,5 @@ class EnemyData:
             gold_reward=d.get("gold_reward", 10),
             color=tuple(d.get("color", [200, 50, 50])),
             idle_config=idle_cfg,
+            on_death_ability=d.get("on_death_ability", ""),
         )

@@ -29,6 +29,7 @@ class CombatUnit:
         self.ability_ids = list(ability_ids)
         self.passive = passive
         self.ability_mods = ability_mods or []
+        self.on_death_ability: str = ""
 
         # Rank position in the lane (1 = front, 4 = back)
         self.rank: int = default_rank
@@ -69,7 +70,7 @@ class CombatUnit:
         fill_rate = self.speed_bar_fill_rate
         if any(b.type == "haste" and b.duration > 0 for b in self.buffs):
             fill_rate *= 1.5
-        if any(b.type == "slow" and b.duration > 0 for b in self.buffs):
+        if any(b.type in ("slow", "poison") and b.duration > 0 for b in self.buffs):
             fill_rate *= 0.5
             
         self.speed_bar += fill_rate * dt
@@ -83,21 +84,21 @@ class CombatUnit:
         for ability_id in list(self.cooldowns):
             self.cooldowns[ability_id] = max(0.0, self.cooldowns[ability_id] - dt)
 
-    def tick_buffs_rt(self, dt: float) -> int:
-        """Tick buffs in real-time. Returns burn damage if a tick fires."""
-        damage = 0
+    def tick_buffs_rt(self, dt: float) -> dict[str, int]:
+        """Tick buffs in real-time. Returns dictionary of damages applied."""
+        damages = {"burn": 0, "poison": 0}
         for buff in self.buffs:
             if not hasattr(buff, '_tick_timer'):
                 buff._tick_timer = 0.0
             buff._tick_timer += dt
             if buff._tick_timer >= 1.0:
                 buff._tick_timer -= 1.0
-                if buff.type == "burn":
-                    damage += int(buff.value)
+                if buff.type in ("burn", "poison"):
+                    damages[buff.type] += int(buff.value)
                 buff.duration -= 1
                 
         self.buffs = [b for b in self.buffs if b.duration > 0]
-        return damage
+        return damages
 
     def can_use_ability(self, ability_id: str) -> bool:
         return self.cooldowns.get(ability_id, 0) <= 0
@@ -175,7 +176,7 @@ class CombatUnit:
 
     @classmethod
     def from_enemy(cls, enemy_data) -> "CombatUnit":
-        return cls(
+        unit = cls(
             unit_id=enemy_data.id,
             name=enemy_data.name,
             team="enemy",
@@ -186,3 +187,6 @@ class CombatUnit:
             ability_ids=list(enemy_data.abilities),
             default_rank=1,  # enemies get sequential ranks assigned externally
         )
+        if hasattr(enemy_data, 'on_death_ability'):
+            unit.on_death_ability = enemy_data.on_death_ability
+        return unit

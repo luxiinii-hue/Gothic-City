@@ -122,15 +122,21 @@ class RealtimeBattle:
             unit.time_alive += dt
             unit.tick_cooldowns_rt(dt)
 
-            # Tick buffs (burn damage, stun expiry)
-            burn_dmg = unit.tick_buffs_rt(dt)
-            if burn_dmg > 0:
-                unit.take_damage(burn_dmg)
-                self._actions.append(BattleAction(
-                    type="burn_tick", target=unit.name,
-                    damage=burn_dmg,
-                    message=f"{unit.name} takes {burn_dmg} burn damage!",
-                ))
+            # Tick buffs (burn/poison damage, stun expiry)
+            damages = unit.tick_buffs_rt(dt)
+            total_dot = 0
+            for dot_type, dmg in damages.items():
+                if dmg > 0:
+                    total_dot += dmg
+                    # Create an action for each damage type
+                    self._actions.append(BattleAction(
+                        type=f"{dot_type}_tick", target=unit.name,
+                        damage=dmg,
+                        message=f"{unit.name} takes {dmg} {dot_type} damage!",
+                    ))
+            
+            if total_dot > 0:
+                unit.take_damage(total_dot)
                 if not unit.alive:
                     self._actions.append(BattleAction(
                         type="defeat", target=unit.name,
@@ -390,6 +396,20 @@ class RealtimeBattle:
                         ability_name=ability.name,
                         message=f"{target.name} gains Phase!",
                     ))
+                elif effect.type == "haste":
+                    target.add_buff("haste", effect.duration)
+                    self._actions.append(BattleAction(
+                        type="hit", source=unit.name, target=target.name,
+                        ability_name=ability.name,
+                        message=f"{target.name} is Hasted!",
+                    ))
+                elif effect.type == "atb_fill":
+                    target.speed_bar = 1.0
+                    self._actions.append(BattleAction(
+                        type="hit", source=unit.name, target=target.name,
+                        ability_name=ability.name,
+                        message=f"{target.name}'s speed bar is full!",
+                    ))
         self._actions.append(BattleAction(
             type="ability", source=unit.name,
             ability_name=ability.name,
@@ -625,7 +645,33 @@ class RealtimeBattle:
             self._handle_death(source_unit)
 
     def _handle_death(self, unit: CombatUnit):
-        """Handle rank sliding when a unit dies."""
+        """Handle rank sliding and on-death abilities when a unit dies."""
+        if getattr(unit, 'on_death_ability', ""):
+            ability = self.ability_registry.get(unit.on_death_ability)
+            if ability:
+                # Temporarily revive to cast
+                unit.alive = True
+                
+                enemies = self.enemy_units if unit.team == "player" else self.player_units
+                allies = self.player_units if unit.team == "player" else self.enemy_units
+                targets = get_targets(ability.targeting, unit, allies, enemies,
+                                      ability_range=ability.range)
+                                      
+                if ability.targeting == "self":
+                    self._execute_self_ability(unit, ability)
+                elif targets:
+                    if ability.targeting in ("single_ally", "all_allies"):
+                        self._execute_support_ability(unit, ability, targets)
+                    elif ability.targeting == "all_enemies":
+                        self._spawn_ability_projectile(unit, ability, targets[0], is_aoe=True)
+                    elif ability.targeting == "front_two":
+                        for t in targets:
+                            self._spawn_ability_projectile(unit, ability, t)
+                    else:
+                        self._spawn_ability_projectile(unit, ability, targets[0])
+                        
+                unit.alive = False
+
         if unit.team == "player":
             self._slide_ranks(self.player_units)
         else:

@@ -4,3 +4,5 @@
 3.1 Ability Cards can also be character specific (move Nightfang's ability here for instance). 
 4. A scaling formula to allow the game to continue on indefinitely. Might require its own plan section.
 5. Tilt the map to be horizontally moving to the right instead of a top-Down view
+6. The warlock boss summoning minions should summon them into the frontline to "tank" and be sacrificed for him.
+6.1 The minions currently does not have any character, they load as a round blob. 
