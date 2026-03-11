@@ -229,9 +229,16 @@ class MapState(BaseState):
                     halo_alpha = int(pulse(self.time, 1.5, 40, 100))
                 else:
                     halo_alpha = 30
-                halo = pygame.Surface((80, 80), pygame.SRCALPHA)
-                pygame.draw.circle(halo, (180, 40, 40, halo_alpha), (40, 40), 32)
-                surface.blit(halo, (node.screen_x - 40, node.screen_y - 40))
+                if not hasattr(self, "_halo_cache"): self._halo_cache = {}
+                cached_alpha = (halo_alpha // 10) * 10
+                if cached_alpha not in self._halo_cache:
+                    halo = pygame.Surface((80, 80), pygame.SRCALPHA)
+                    pygame.draw.circle(halo, (180, 40, 40, 255), (40, 40), 32)
+                    self._halo_cache[cached_alpha] = halo
+                
+                halo_surf = self._halo_cache[cached_alpha]
+                halo_surf.set_alpha(cached_alpha)
+                surface.blit(halo_surf, (node.screen_x - 40, node.screen_y - 40))
 
             if is_visited or not is_available:
                 icon = icon.copy()
@@ -259,10 +266,10 @@ class MapState(BaseState):
         if is_visited: label_color = DARK_GRAY
         
         # Pill background
-        pill_w, pill_h = 70, 22
-        pill = pygame.Surface((pill_w, pill_h), pygame.SRCALPHA)
-        pill.fill((0, 0, 0, 160))
-        surface.blit(pill, (node.screen_x - pill_w//2, node.screen_y + 35 - pill_h//2))
+        if not hasattr(self, "_pill_surf"):
+            self._pill_surf = pygame.Surface((70, 22), pygame.SRCALPHA)
+            self._pill_surf.fill((0, 0, 0, 160))
+        surface.blit(self._pill_surf, (node.screen_x - 35, node.screen_y + 35 - 11))
         
         draw_text(surface, label, node.screen_x, node.screen_y + 35, size=15, color=label_color, center=True, shadow=True)
     def _draw_sidebar(self, surface: pygame.Surface):

@@ -92,7 +92,11 @@ class SettingsOverlay:
 
     def draw(self, surface: pygame.Surface):
         # Draw Quick Mute icon
-        pygame.draw.circle(surface, (30, 30, 40), self.quick_mute_rect.center, 20)
+        if not hasattr(self, "_btn_bg"):
+            self._btn_bg = pygame.Surface((40, 40), pygame.SRCALPHA)
+            pygame.draw.circle(self._btn_bg, (30, 30, 40), (20, 20), 20)
+        surface.blit(self._btn_bg, self.quick_mute_rect.topleft)
+        
         pygame.draw.circle(surface, GOLD if not self.muted else (150, 50, 50), self.quick_mute_rect.center, 20, 2)
         
         # Draw a little speaker
@@ -127,9 +131,10 @@ class SettingsOverlay:
             return
 
         # Dark overlay
-        dark = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-        dark.fill((0, 0, 0, 180))
-        surface.blit(dark, (0, 0))
+        if not hasattr(self, "_dark_overlay"):
+            self._dark_overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
+            self._dark_overlay.fill((0, 0, 0, 180))
+        surface.blit(self._dark_overlay, (0, 0))
 
         # Panel
         pygame.draw.rect(surface, PANEL_BG, self.rect, border_radius=15)

@@ -134,9 +134,6 @@ class IdleAnimator:
             gx = center_x - glow_r
             gy = foot_y - sh * 0.55 - glow_r + bob_y
             surface.blit(glow_surf, (gx, gy))
-            gx = center_x - glow_r
-            gy = foot_y - sh * 0.55 - glow_r + bob_y
-            surface.blit(glow_surf, (gx, gy))
 
         # Sprite: the PNG itself, always drawn last so it's on top
         surface.blit(scaled, (x, y))
