@@ -19,12 +19,14 @@ class SettingsOverlay:
         # Gear icon rect
         self.gear_rect = pygame.Rect(SCREEN_WIDTH - 50, 10, 40, 40)
         
+        # Quick mute icon rect
+        self.quick_mute_rect = pygame.Rect(SCREEN_WIDTH - 100, 10, 40, 40)
+        
         # UI Rects
         self.slider_bg = pygame.Rect(self.rect.x + 50, self.rect.y + 120, 300, 20)
         self.slider_handle = pygame.Rect(0, 0, 16, 40)
         self._update_handle()
         
-        self.mute_btn = pygame.Rect(self.rect.centerx - 60, self.rect.y + 180, 120, 40)
         self.close_btn = pygame.Rect(self.rect.centerx - 60, self.rect.y + 240, 120, 40)
         
         self.dragging = False
@@ -50,15 +52,17 @@ class SettingsOverlay:
     def handle_event(self, event: pygame.event.Event) -> bool:
         """Returns True if the event was consumed by the overlay."""
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.quick_mute_rect.collidepoint(event.pos):
+                self.toggle_mute()
+                return True
+                
             if not self.active and self.gear_rect.collidepoint(event.pos):
                 self.active = True
                 return True
-                
+
             if self.active:
                 if self.close_btn.collidepoint(event.pos):
                     self.active = False
-                elif self.mute_btn.collidepoint(event.pos):
-                    self.toggle_mute()
                 elif self.slider_bg.collidepoint(event.pos) or self.slider_handle.collidepoint(event.pos):
                     self.dragging = True
                     self._handle_drag(event.pos[0])
@@ -87,6 +91,26 @@ class SettingsOverlay:
         self.set_volume(vol)
 
     def draw(self, surface: pygame.Surface):
+        # Draw Quick Mute icon
+        pygame.draw.circle(surface, (30, 30, 40), self.quick_mute_rect.center, 20)
+        pygame.draw.circle(surface, GOLD if not self.muted else (150, 50, 50), self.quick_mute_rect.center, 20, 2)
+        
+        # Draw a little speaker
+        spk_color = GOLD if not self.muted else GRAY
+        spk_rect = pygame.Rect(self.quick_mute_rect.x + 12, self.quick_mute_rect.y + 16, 6, 8)
+        pygame.draw.rect(surface, spk_color, spk_rect)
+        pygame.draw.polygon(surface, spk_color, [
+            (spk_rect.right, spk_rect.centery - 4),
+            (spk_rect.right + 6, spk_rect.centery - 10),
+            (spk_rect.right + 6, spk_rect.centery + 10),
+            (spk_rect.right, spk_rect.centery + 4)
+        ])
+        
+        if self.muted:
+            pygame.draw.line(surface, RED, 
+                             (self.quick_mute_rect.centerx - 12, self.quick_mute_rect.centery - 12), 
+                             (self.quick_mute_rect.centerx + 12, self.quick_mute_rect.centery + 12), 3)
+
         # Draw gear icon
         gear_img = get_icon("gear", size=(32, 32))
         if gear_img:
@@ -138,22 +162,6 @@ class SettingsOverlay:
         ]
         pygame.draw.polygon(surface, GOLD, diamond)
         pygame.draw.polygon(surface, WHITE, diamond, 1)
-
-        # Mute button
-        mute_color = (60, 30, 30) if self.muted else (40, 40, 50)
-        pygame.draw.rect(surface, mute_color, self.mute_btn, border_radius=5)
-        pygame.draw.rect(surface, PANEL_BORDER, self.mute_btn, width=1, border_radius=5)
-
-        music_img = get_icon("music", size=(32, 32))
-        if music_img:
-            surface.blit(music_img, (self.mute_btn.centerx - 16, self.mute_btn.centery - 16))
-            if self.muted:
-                # Draw a clean red diagonal line over the music icon to indicate it is muted
-                pygame.draw.line(surface, RED, 
-                                 (self.mute_btn.centerx - 14, self.mute_btn.centery - 14), 
-                                 (self.mute_btn.centerx + 14, self.mute_btn.centery + 14), 4)
-        else:
-            draw_text(surface, "Unmute" if self.muted else "Mute", self.mute_btn.centerx, self.mute_btn.centery, size=FONT_SIZE_MEDIUM, color=WHITE, center=True)
 
         # Close button
         pygame.draw.rect(surface, (50, 50, 60), self.close_btn, border_radius=5)

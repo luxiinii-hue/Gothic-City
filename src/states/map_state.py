@@ -223,6 +223,16 @@ class MapState(BaseState):
             icon_size = 32 if node.node_type != "boss" else 48
             icon = pygame.transform.smoothscale(icon, (icon_size, icon_size))
 
+            if node.node_type == "elite":
+                # Pulse red halo behind elite, dimmer if not available
+                if is_available:
+                    halo_alpha = int(pulse(self.time, 1.5, 40, 100))
+                else:
+                    halo_alpha = 30
+                halo = pygame.Surface((80, 80), pygame.SRCALPHA)
+                pygame.draw.circle(halo, (180, 40, 40, halo_alpha), (40, 40), 32)
+                surface.blit(halo, (node.screen_x - 40, node.screen_y - 40))
+
             if is_visited or not is_available:
                 icon = icon.copy()
                 icon.fill((120, 120, 140, 255), special_flags=pygame.BLEND_RGBA_MULT)
