@@ -321,6 +321,9 @@ class RealtimeBattle:
         for effect in ability.effects:
             if effect.type == "summon":
                 self._do_summon(unit, effect.enemy_id, effect.value)
+                # Boss specific flair: pause ATB after summon to let animation play out
+                if "cultist" in effect.enemy_id.lower() and unit.name == "Goblin Warlock":
+                    unit.speed_bar = -1.5  # Heavy delay
             elif effect.type == "self_move":
                 self._apply_position_effect(unit, unit, effect.type, effect.value)
         self._actions.append(BattleAction(
@@ -334,17 +337,19 @@ class RealtimeBattle:
         template = self.enemy_templates.get(enemy_id)
         if not template:
             return
+            
         alive_enemies = [u for u in self.enemy_units if u.alive]
         occupied_ranks = sum(getattr(u, 'size', 1) for u in alive_enemies + self._pending_units)
+        
         for _ in range(max(1, count)):
             if occupied_ranks + getattr(template, 'size', 1) > MAX_RANKS:
                 break
-            
+
             existing_names = [u.name for u in self.enemy_units + self._pending_units]
             suffix = 1
             while f"{template.name} {suffix}" in existing_names:
                 suffix += 1
-                
+
             edata = EnemyData(
                 id=template.id,
                 name=f"{template.name} {suffix}",
@@ -360,8 +365,23 @@ class RealtimeBattle:
                 idle_config=template.idle_config,
                 size=getattr(template, 'size', 1),
             )
+            
+            # Warlock Boss specific mechanics - spawn minions in front
+            spawn_rank = occupied_ranks + 1
+            if enemy_id == "cultist_minion":
+                spawn_rank = 1
+                
+                # Push back all existing enemies to make room for the new minion
+                for u in self.enemy_units + self._pending_units:
+                    if u.alive:
+                        u.rank += getattr(template, 'size', 1)
+                        u.x, u.y = get_unit_pos(u)
+                        # Ensure we don't go out of bounds (should be protected by MAX_RANKS check above anyway)
+                        if u.rank > MAX_RANKS:
+                            u.rank = MAX_RANKS
+
             new_unit = CombatUnit.from_enemy(edata)
-            new_unit.rank = occupied_ranks + 1
+            new_unit.rank = spawn_rank
             new_unit.x, new_unit.y = get_unit_pos(new_unit)
             new_unit._summon_edata = edata
             self._pending_units.append(new_unit)
@@ -392,6 +412,10 @@ class RealtimeBattle:
                         ability_name=ability.name, heal=healed,
                         message=f"{target.name} healed for {healed}!",
                     ))
+                    # Boss specific flair: when minion sacrifices, kill the minion
+                    if ability.name == "Dark Sacrifice":
+                        unit.hp = 0
+                        unit.alive = False
                 elif effect.type == "swap":
                     self._apply_position_effect(unit, target, "swap", effect.value)
                 elif effect.type == "taunt":

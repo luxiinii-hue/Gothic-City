@@ -235,11 +235,30 @@ class CombatScreenState(BaseState):
 
     def _process_action(self, action: BattleAction):
         """Trigger visual effects based on battle actions."""
+        
+        # Specific handler for Warlock casting summon
+        if action.type == "ability" and action.ability_name == "Summon Cultist":
+            source_unit = self._find_unit(action.source)
+            if source_unit:
+                spawn_death_burst(self.particle_emitter, source_unit.x, source_unit.y, color=(80, 20, 100))
+        
         if action.message:
             self.action_log.append((action.message, 0.0))
             if len(self.action_log) > self.max_log_lines:
                 self.action_log = self.action_log[-self.max_log_lines:]
 
+        # Specific handler for Warlock Sacrifice visual flair
+        if action.type == "hit" and action.ability_name == "Dark Sacrifice":
+            source_unit = self._find_unit(action.source)
+            target_unit = self._find_unit(action.target)
+            if source_unit and target_unit:
+                # Soul drain visual
+                spawn_death_burst(self.particle_emitter, source_unit.x, source_unit.y, color=(200, 20, 40))
+                spawn_death_burst(self.particle_emitter, target_unit.x, target_unit.y, color=(255, 40, 80))
+                self.combat_animator.add_flash(action.target, color=(255, 100, 100), duration=0.4)
+                self.particle_emitter.add_floating_number(
+                    target_unit.x, target_unit.y - 60, "+POWER!", (255, 50, 50))
+        
         if action.type == "hit" and action.damage > 0:
             target_unit = self._find_unit(action.target)
             if target_unit:
@@ -326,7 +345,15 @@ class CombatScreenState(BaseState):
                 self.enemy_animators[unit_name] = None
 
         # Spawn entry particles at the new unit's position (purple burst)
-        spawn_death_burst(self.particle_emitter, new_unit.x, new_unit.y, color=(200, 80, 255))
+        # Cultist Minion specific entrance flair
+        if "Cultist Minion" in unit_name:
+            # Shake screen heavily when minion drops
+            self.combat_animator.add_shake(unit_name, intensity=4, duration=0.4)
+            # Portal/burst effect
+            spawn_death_burst(self.particle_emitter, new_unit.x, new_unit.y, color=(150, 40, 255))
+            spawn_death_burst(self.particle_emitter, new_unit.x, new_unit.y, color=(50, 10, 80))
+        else:
+            spawn_death_burst(self.particle_emitter, new_unit.x, new_unit.y, color=(200, 80, 255))
 
         # Track position for slide animation
         self.previous_positions[unit_name] = (new_unit.x, new_unit.y)
