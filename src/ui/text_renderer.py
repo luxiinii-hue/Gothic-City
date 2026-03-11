@@ -25,9 +25,15 @@ def draw_text(surface: pygame.Surface, text: str, x: int, y: int,
               font_type: str = "body", shadow: bool = False):
     font = get_font(size, font_type)
     
+    # Ensure color is a tuple for hashing
+    color_key = tuple(color) if isinstance(color, (list, pygame.Color)) else color
+    
     # Use render cache for static text to prevent frame-by-frame rendering overhead
-    render_key = (text, size, color, font_type, shadow)
+    render_key = (str(text), size, color_key, font_type, shadow)
     if render_key not in _render_cache:
+        if len(_render_cache) > 500:
+            _render_cache.clear()
+            
         text_surf = font.render(str(text), True, color)
         
         if shadow:
@@ -38,11 +44,7 @@ def draw_text(surface: pygame.Surface, text: str, x: int, y: int,
             _render_cache[render_key] = combined_surf
         else:
             _render_cache[render_key] = text_surf
-            
-    # Clear cache if it gets too large to prevent memory leaks
-    if len(_render_cache) > 500:
-        _render_cache.clear()
-            
+
     final_surf = _render_cache[render_key]
     if center:
         rect = final_surf.get_rect(center=(x, y))

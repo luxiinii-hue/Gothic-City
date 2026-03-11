@@ -126,7 +126,8 @@ class IdleAnimator:
             if glow_r not in self._glow_surf_cache:
                 gs = pygame.Surface((glow_r * 2, glow_r * 2), pygame.SRCALPHA)
                 # Draw with full alpha once, then set_alpha during blit for faster fading
-                pygame.draw.circle(gs, (*cfg.glow_color, 255), (glow_r, glow_r), glow_r)
+                glow_color = tuple(cfg.glow_color) if isinstance(cfg.glow_color, (list, pygame.Color)) else cfg.glow_color
+                pygame.draw.circle(gs, (*glow_color, 255), (glow_r, glow_r), glow_r)
                 self._glow_surf_cache[glow_r] = gs
             
             glow_surf = self._glow_surf_cache[glow_r]

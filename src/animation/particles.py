@@ -102,7 +102,7 @@ class ParticleEmitter:
                 if cached_alpha == 0 and alpha > 0: cached_alpha = 10
                 
                 # Key on (color, size, rounded_alpha)
-                color_key = (*p.color, cached_alpha)
+                color_key = tuple(p.color) + (cached_alpha,)
                 cache_key = (color_key, size)
                 if cache_key not in self._circle_cache:
                     ps = pygame.Surface((size * 2, size * 2), pygame.SRCALPHA)
@@ -123,9 +123,10 @@ class ParticleEmitter:
             if alpha <= 0:
                 continue
                 
-            base_key = (f.text, f.color)
+            color_key = tuple(f.color) if isinstance(f.color, (list, pygame.Color)) else f.color
+            base_key = (str(f.text), color_key)
             if base_key not in self._text_cache:
-                self._text_cache[base_key] = self._font.render(f.text, True, f.color)
+                self._text_cache[base_key] = self._font.render(str(f.text), True, f.color)
             
             text_surf = self._text_cache[base_key]
             # Round alpha to nearest 15 for 15x higher cache hit rate on alpha blits
