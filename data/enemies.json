@@ -169,7 +169,7 @@
     {
         "id": "cultist_minion",
         "name": "Cultist Minion",
-        "sprite": "Enemies/Cultist_Minion.png",
+        "sprite": "Enemies/Cultist_Minion_Sheet.png",
         "max_hp": 20,
         "strength": 2,
         "armor": 0,
@@ -189,7 +189,9 @@
             "bob_frequency": 1.5,
             "breathe_min": 0.99,
             "breathe_max": 1.01,
-            "glow_enabled": false
+            "glow_enabled": false,
+            "num_frames": 6,
+            "frame_rate": 0.15
         }
     }
 ]

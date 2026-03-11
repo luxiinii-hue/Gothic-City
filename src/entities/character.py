@@ -14,6 +14,8 @@ class IdleConfig:
     glow_radius_factor: float = 0.25
     glow_alpha_min: int = 8
     glow_alpha_max: int = 25
+    num_frames: int = 1
+    frame_rate: float = 0.15
 
     @classmethod
     def from_dict(cls, data: dict) -> "IdleConfig":

@@ -118,7 +118,7 @@ class CombatScreenState(BaseState):
                 aspect = img.get_width() / img.get_height()
                 sprite_w = int(sprite_h * aspect)
                 scaled = am.get_scaled(edata.sprite, sprite_w, sprite_h)
-                self.enemy_animators[unit.name] = IdleAnimator(scaled, edata.idle_config)
+                self.enemy_animators[unit.name] = IdleAnimator(scaled, edata.idle_config, flip_x=True)
             else:
                 self.enemy_animators[unit.name] = None
 
@@ -340,7 +340,7 @@ class CombatScreenState(BaseState):
                 sprite_w = int(sprite_h * aspect)
                 scaled = am.get_scaled(edata.sprite, sprite_w, sprite_h)
                 self.enemy_animators[unit_name] = IdleAnimator(
-                    scaled, edata.idle_config)
+                    scaled, edata.idle_config, flip_x=True)
             else:
                 self.enemy_animators[unit_name] = None
 

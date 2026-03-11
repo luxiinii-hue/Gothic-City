@@ -11,16 +11,39 @@ from config import IDLE_SCALE_STEPS, SHADOW_ALPHA
 
 
 class IdleAnimator:
-    def __init__(self, base_surface: pygame.Surface, config: IdleConfig):
-        self.base = base_surface
+    def __init__(self, base_surface: pygame.Surface, config: IdleConfig, flip_x: bool = False):
         self.config = config
         self.time = 0.0
-        self.base_w = base_surface.get_width()
-        self.base_h = base_surface.get_height()
+        
+        self.num_frames = getattr(config, "num_frames", 1)
+        self.frame_rate = getattr(config, "frame_rate", 0.15)
+        
+        self.frames = []
+        if self.num_frames > 1:
+            fw = base_surface.get_width() // self.num_frames
+            fh = base_surface.get_height()
+            for i in range(self.num_frames):
+                frame = pygame.Surface((fw, fh), pygame.SRCALPHA)
+                frame.blit(base_surface, (0, 0), (i * fw, 0, fw, fh))
+                if flip_x:
+                    frame = pygame.transform.flip(frame, True, False)
+                self.frames.append(frame)
+        else:
+            frame = base_surface
+            if flip_x:
+                frame = pygame.transform.flip(frame, True, False)
+            self.frames.append(frame)
+
+        self.base = self.frames[0]
+        self.base_w = self.base.get_width()
+        self.base_h = self.base.get_height()
 
         # Pre-cache the few scaled frames needed for the tiny breathe range
+        # Note: With multiple frames, pre-caching every frame and scale combination is memory intensive.
+        # So if it's animated (num_frames > 1), we disable breathe caching and scale dynamically.
         self._scale_cache: dict[tuple[int, int], pygame.Surface] = {}
-        self._precache_scales()
+        if self.num_frames == 1:
+            self._precache_scales()
 
     def _precache_scales(self):
         steps = IDLE_SCALE_STEPS
@@ -38,10 +61,21 @@ class IdleAnimator:
     def _get_scaled(self, scale: float) -> pygame.Surface:
         w = max(1, int(self.base_w * scale))
         h = max(1, int(self.base_h * scale))
-        key = (w, h)
-        if key not in self._scale_cache:
-            self._scale_cache[key] = pygame.transform.smoothscale(self.base, key)
-        return self._scale_cache[key]
+        
+        frame_idx = 0
+        if self.num_frames > 1:
+            frame_idx = int(self.time / self.frame_rate) % self.num_frames
+            
+        current_frame = self.frames[frame_idx]
+        
+        if self.num_frames == 1:
+            key = (w, h)
+            if key not in self._scale_cache:
+                self._scale_cache[key] = pygame.transform.smoothscale(current_frame, key)
+            return self._scale_cache[key]
+        else:
+            # If animated, scale dynamically to save memory
+            return pygame.transform.smoothscale(current_frame, (w, h))
 
     def update(self, dt: float):
         self.time += dt
