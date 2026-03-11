@@ -15,10 +15,16 @@ from src.states.result_state import ResultState
 
 class Game:
     def __init__(self):
+        # Pre-init mixer for Pygbag WebAudio compatibility (must be before pygame.init)
+        try:
+            pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=1024)
+        except Exception:
+            pass
+            
         pygame.init()
         try:
-            # Initialize mixer with settings optimized for Web/Pygbag (44.1kHz, 2048 buffer)
-            pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=2048)
+            # Re-init just to be safe
+            pygame.mixer.init()
         except pygame.error:
             print("Warning: Audio device could not be initialized.")
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
