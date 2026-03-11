@@ -17,7 +17,8 @@ class Game:
     def __init__(self):
         pygame.init()
         try:
-            pygame.mixer.init()
+            # Initialize mixer with settings optimized for Web/Pygbag (44.1kHz, 512 buffer)
+            pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
         except pygame.error:
             print("Warning: Audio device could not be initialized.")
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
