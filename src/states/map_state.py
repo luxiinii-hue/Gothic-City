@@ -243,11 +243,18 @@ class MapState(BaseState):
             # Emergency Fallback to simple circle
             pygame.draw.circle(surface, NODE_COLORS.get(node.node_type, GRAY), (node.screen_x, node.screen_y), MAP_NODE_RADIUS)
 
-        # Label below
+        # Label below with dark pill background for readability
         label = NODE_LABELS.get(node.node_type, "?")
         label_color = WHITE if is_available else GRAY
         if is_visited: label_color = DARK_GRAY
-        draw_text(surface, label, node.screen_x, node.screen_y + 35, size=14, color=label_color, center=True)
+        
+        # Pill background
+        pill_w, pill_h = 70, 22
+        pill = pygame.Surface((pill_w, pill_h), pygame.SRCALPHA)
+        pill.fill((0, 0, 0, 160))
+        surface.blit(pill, (node.screen_x - pill_w//2, node.screen_y + 35 - pill_h//2))
+        
+        draw_text(surface, label, node.screen_x, node.screen_y + 35, size=15, color=label_color, center=True, shadow=True)
     def _draw_sidebar(self, surface: pygame.Surface):
         """Draw team HP and gold on the right side."""
         sidebar_x = SCREEN_WIDTH - 260

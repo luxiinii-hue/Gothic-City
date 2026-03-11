@@ -17,7 +17,7 @@ class Game:
     def __init__(self):
         # Pre-init mixer for Pygbag WebAudio compatibility (must be before pygame.init)
         try:
-            pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=1024)
+            pygame.mixer.pre_init(frequency=44100, size=-16, channels=2, buffer=2048)
         except Exception:
             pass
             
