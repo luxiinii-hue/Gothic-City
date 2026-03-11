@@ -36,6 +36,9 @@ class ParticleEmitter:
     def __init__(self):
         self.particles: list[Particle] = []
         self.floaters: list[FloatingNumber] = []
+        self._circle_cache = {}
+        self._text_cache = {}
+        self._font = None
 
     def emit_burst(self, x: float, y: float, count: int, color: tuple,
                    speed_range: tuple = (30, 80), lifetime: float = 0.6,
@@ -93,25 +96,48 @@ class ParticleEmitter:
                 alpha = 255
             size = max(1, int(p.size * (1.0 - p.age / p.lifetime * 0.5)))
             if alpha > 0 and size > 0:
-                ps = pygame.Surface((size * 2, size * 2), pygame.SRCALPHA)
-                pygame.draw.circle(ps, (*p.color, alpha), (size, size), size)
-                surface.blit(ps, (int(p.x) - size, int(p.y) - size))
+                # Use cached circle surfaces to prevent huge allocations
+                # Key on (color, size, alpha)
+                color_key = (*p.color, alpha)
+                cache_key = (color_key, size)
+                if cache_key not in self._circle_cache:
+                    ps = pygame.Surface((size * 2, size * 2), pygame.SRCALPHA)
+                    pygame.draw.circle(ps, color_key, (size, size), size)
+                    self._circle_cache[cache_key] = ps
+                surface.blit(self._circle_cache[cache_key], (int(p.x) - size, int(p.y) - size))
 
         # Draw floating numbers
+        if not self.floaters:
+            return
+            
+        if not self._font:
+            from src.ui.text_renderer import get_font
+            self._font = get_font(28, "body")
+            
         for f in self.floaters:
             alpha = max(0, int(255 * (1.0 - f.age / f.lifetime)))
             if alpha <= 0:
                 continue
-            from src.ui.text_renderer import get_font
-            font = get_font(28, "body")
-            text_surf = font.render(f.text, True, f.color)
-            # Apply alpha
-            alpha_surf = pygame.Surface(text_surf.get_size(), pygame.SRCALPHA)
-            alpha_surf.fill((255, 255, 255, alpha))
-            text_surf = text_surf.copy()
-            text_surf.blit(alpha_surf, (0, 0), special_flags=pygame.BLEND_RGBA_MULT)
+                
+            # Cache the rendered text surface for the duration of the floater's life
+            # (or at least avoid re-rendering every frame if alpha is the same)
+            # Actually, alpha changes every frame, so we still have to handle it.
+            # But we can cache the base (non-alpha) surface!
+            base_key = (f.text, f.color)
+            if base_key not in self._text_cache:
+                self._text_cache[base_key] = self._font.render(f.text, True, f.color)
+            
+            text_surf = self._text_cache[base_key]
+            # Apply alpha efficiently
+            text_surf.set_alpha(alpha)
             surface.blit(text_surf, (int(f.x) - text_surf.get_width() // 2,
                                      int(f.y) - text_surf.get_height() // 2))
+        
+        # Periodically clear caches if they get too large
+        if len(self._circle_cache) > 2000:
+            self._circle_cache.clear()
+        if len(self._text_cache) > 100:
+            self._text_cache.clear()
 
 
 # --- Preset spawn functions ---

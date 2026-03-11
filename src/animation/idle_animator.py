@@ -12,6 +12,8 @@ from config import IDLE_SCALE_STEPS, SHADOW_ALPHA
 
 class IdleAnimator:
     def __init__(self, base_surface: pygame.Surface, config: IdleConfig, flip_x: bool = False):
+        self._shadow_surf_cache = {}
+        self._glow_surf_cache = {}
         self.config = config
         self.time = 0.0
         
@@ -105,10 +107,14 @@ class IdleAnimator:
             shadow_intensity = 1.0 - (bob_y / cfg.bob_amplitude) * 0.05
             shadow_w = max(4, int(shadow_w * shadow_intensity))
             shadow_h = max(2, int(shadow_h * shadow_intensity))
-        shadow_surf = pygame.Surface((shadow_w, shadow_h), pygame.SRCALPHA)
-        pygame.draw.ellipse(shadow_surf, (0, 0, 0, SHADOW_ALPHA),
-                            (0, 0, shadow_w, shadow_h))
-        surface.blit(shadow_surf, (center_x - shadow_w // 2,
+        # Cache shadow surface by dimensions to prevent frame-by-frame allocation
+        if (shadow_w, shadow_h) not in self._shadow_surf_cache:
+            shadow_surf = pygame.Surface((shadow_w, shadow_h), pygame.SRCALPHA)
+            pygame.draw.ellipse(shadow_surf, (0, 0, 0, SHADOW_ALPHA),
+                                (0, 0, shadow_w, shadow_h))
+            self._shadow_surf_cache[(shadow_w, shadow_h)] = shadow_surf
+            
+        surface.blit(self._shadow_surf_cache[(shadow_w, shadow_h)], (center_x - shadow_w // 2,
                                    foot_y - shadow_h // 2))
 
         # Glow: very faint colored halo behind sprite center
@@ -116,9 +122,18 @@ class IdleAnimator:
             glow_alpha = int(pulse(self.time, 0.9,
                                    cfg.glow_alpha_min, cfg.glow_alpha_max))
             glow_r = max(4, int(sw * cfg.glow_radius_factor))
-            glow_surf = pygame.Surface((glow_r * 2, glow_r * 2), pygame.SRCALPHA)
-            glow_color = (*cfg.glow_color, glow_alpha)
-            pygame.draw.circle(glow_surf, glow_color, (glow_r, glow_r), glow_r)
+            # Cache glow surface by radius to avoid per-frame circle drawing
+            if glow_r not in self._glow_surf_cache:
+                gs = pygame.Surface((glow_r * 2, glow_r * 2), pygame.SRCALPHA)
+                # Draw with full alpha once, then set_alpha during blit for faster fading
+                pygame.draw.circle(gs, (*cfg.glow_color, 255), (glow_r, glow_r), glow_r)
+                self._glow_surf_cache[glow_r] = gs
+            
+            glow_surf = self._glow_surf_cache[glow_r]
+            glow_surf.set_alpha(glow_alpha)
+            gx = center_x - glow_r
+            gy = foot_y - sh * 0.55 - glow_r + bob_y
+            surface.blit(glow_surf, (gx, gy))
             gx = center_x - glow_r
             gy = foot_y - sh * 0.55 - glow_r + bob_y
             surface.blit(glow_surf, (gx, gy))
